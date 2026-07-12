@@ -77,6 +77,9 @@ test("保留终章技术栈、品牌素材与独立组件", async () => {
 
   const legacyPreviewFiles = await readdir(
     new URL("../app/_sites-preview", import.meta.url),
-  );
+  ).catch((error) => {
+    if (error?.code === "ENOENT") return [];
+    throw error;
+  });
   assert.deepEqual(legacyPreviewFiles, []);
 });
