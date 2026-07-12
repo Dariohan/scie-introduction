@@ -90,9 +90,9 @@ await access(join(outputRoot, "favicon.svg"));
 
 const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 if (publicSiteUrl) {
-  const normalizedPublicSiteUrl = publicSiteUrl.endsWith("/")
-    ? publicSiteUrl
-    : `${publicSiteUrl}/`;
+  const normalizedUrl = new URL(publicSiteUrl);
+  if (!normalizedUrl.pathname.endsWith("/")) normalizedUrl.pathname += "/";
+  const normalizedPublicSiteUrl = normalizedUrl.toString();
   for (const expectedUrl of [
     `${normalizedPublicSiteUrl}og.png`,
     `${normalizedPublicSiteUrl}media/scie-emblem.svg`,
