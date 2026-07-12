@@ -2,16 +2,20 @@
 
 import { ArrowDown, Compass, MapPin, Maximize2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { campusPlans, historyEvents, schoolStats } from "@/lib/content";
+import type { SiteContent } from "@/lib/content";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
 
-export function OverviewSection() {
+type OverviewSectionProps = {
+  content: SiteContent["overview"];
+  shared: SiteContent["shared"];
+};
+
+export function OverviewSection({ content, shared }: OverviewSectionProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const [activeEvent, setActiveEvent] = useState(0);
-  const [activePlan, setActivePlan] =
-    useState<(typeof campusPlans)[number]["id"]>(campusPlans[0].id);
+  const [activePlan, setActivePlan] = useState(content.campusMap.plans[0].id);
 
   useEffect(() => {
     const hero = heroRef.current;
@@ -36,7 +40,8 @@ export function OverviewSection() {
   }, []);
 
   const selectedPlan =
-    campusPlans.find((plan) => plan.id === activePlan) ?? campusPlans[0];
+    content.campusMap.plans.find((plan) => plan.id === activePlan) ??
+    content.campusMap.plans[0];
 
   return (
     <section id="overview" className="overview-section">
@@ -56,16 +61,17 @@ export function OverviewSection() {
         <div className="hero__content">
           <div className="hero__eyebrow reveal-item">
             <span />
-            <p>中国 · 深圳 · 福田</p>
+            <p>{content.hero.eyebrow}</p>
           </div>
           <h1 className="reveal-item">
-            <span>深圳国际</span>
-            <span>交流书院</span>
+            {content.hero.titleLines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
           </h1>
           <p className="hero__lead reveal-item">
-            在一座向海而生的城市，
+            {content.hero.leadLines[0]}
             <br />
-            学会认识世界，也准备改变世界。
+            {content.hero.leadLines[1]}
           </p>
           <button
             type="button"
@@ -76,7 +82,7 @@ export function OverviewSection() {
                 ?.scrollIntoView({ behavior: "smooth" })
             }
           >
-            开始探索
+            {content.hero.action}
             <ArrowDown aria-hidden="true" />
           </button>
         </div>
@@ -84,60 +90,59 @@ export function OverviewSection() {
         <div className="hero__coordinates reveal-item">
           <Compass aria-hidden="true" />
           <div>
-            <span>校园坐标</span>
-            <strong>中国 · 深圳</strong>
-            <strong>福田 · 安托山</strong>
+            <span>{content.hero.coordinatesLabel}</span>
+            {content.hero.coordinatesLines.map((line) => (
+              <strong key={line}>{line}</strong>
+            ))}
           </div>
         </div>
 
         <div className="hero__scroll" aria-hidden="true">
-          <span>继续向下</span>
+          <span>{content.hero.scrollCue}</span>
           <i />
         </div>
       </div>
 
       <div id="overview-content" className="section-shell overview-content">
         <SectionHeading
-          number="01"
-          eyebrow="学校概况"
-          title="一所学校，生长在深圳的时间里"
-          description="从水围到安托山，从一间间教室到连接世界的坐标，二十余年的变化最终沉淀为一种持续向上的姿态。"
+          number={content.heading.number}
+          eyebrow={content.heading.eyebrow}
+          title={content.heading.title}
+          description={content.heading.description}
         />
 
         <div className="location-story reveal-item">
           <div className="location-story__copy">
-            <span className="kicker">地理位置</span>
-            <h3>在福田，靠近城市，也保留一座绿色校园的呼吸。</h3>
-            <p>
-              校园位于深圳市福田区安托山六路3号。城市的开放、速度与多元，不只是背景，也成为学习经验的一部分。
-            </p>
+            <span className="kicker">{content.location.kicker}</span>
+            <h3>{content.location.title}</h3>
+            <p>{content.location.body}</p>
             <div className="address-line">
               <MapPin aria-hidden="true" />
-              <span>广东省深圳市福田区安托山六路3号</span>
+              <span>{shared.address}</span>
             </div>
           </div>
-          <div className="location-story__visual" aria-label="深圳与世界坐标示意">
+          <div className="location-story__visual" aria-label={content.location.visualAria}>
             <div className="coordinate-grid" aria-hidden="true" />
             <div className="city-orbit city-orbit--one" />
             <div className="city-orbit city-orbit--two" />
             <div className="city-pulse">
               <span />
-              <strong>深圳</strong>
+              <strong>{content.location.city}</strong>
             </div>
             <div className="location-card">
-              <small>所在区域</small>
-              <strong>福田区</strong>
-              <span>安托山</span>
+              <small>{content.location.areaLabel}</small>
+              <strong>{content.location.district}</strong>
+              <span>{content.location.neighbourhood}</span>
             </div>
           </div>
         </div>
 
-        <div className="stats-grid" aria-label="学校数据">
-          {schoolStats.map((stat) => (
+        <div className="stats-grid" aria-label={content.statsAria}>
+          {content.stats.map((stat) => (
             <article className="stat-card reveal-item" key={stat.label}>
               <AnimatedCounter
                 value={stat.value}
-                decimals={"decimals" in stat ? stat.decimals : 0}
+                decimals={stat.decimals}
                 suffix={stat.suffix}
               />
               <h3>{stat.label}</h3>
@@ -148,13 +153,17 @@ export function OverviewSection() {
 
         <div className="history-block">
           <div className="subsection-title reveal-item">
-            <span className="kicker">历史沿革</span>
-            <h3>时间不是年表，<br />而是一代代人的共同记忆。</h3>
+            <span className="kicker">{content.history.kicker}</span>
+            <h3>
+              {content.history.titleLines[0]}
+              <br />
+              {content.history.titleLines[1]}
+            </h3>
           </div>
 
           <div className="history-experience reveal-item">
             <div className="history-image">
-              {historyEvents.map((event, index) => (
+              {content.history.events.map((event, index) => (
                 <SmartImage
                   key={event.year}
                   src={event.image}
@@ -165,12 +174,12 @@ export function OverviewSection() {
                 />
               ))}
               <div className="history-image__year">
-                {historyEvents[activeEvent].year}
+                {content.history.events[activeEvent].year}
               </div>
             </div>
 
-            <div className="history-timeline" aria-label="学校历史时间轴">
-              {historyEvents.map((event, index) => (
+            <div className="history-timeline" aria-label={content.history.timelineAria}>
+              {content.history.events.map((event, index) => (
                 <button
                   type="button"
                   aria-pressed={activeEvent === index}
@@ -191,15 +200,19 @@ export function OverviewSection() {
 
         <div className="campus-map-block">
           <div className="subsection-title reveal-item">
-            <span className="kicker">校园空间导览</span>
-            <h3>沿着真实图纸，<br />读懂一座立体校园。</h3>
-            <p>点击下方选项切换校园空间图；不同图纸的比例与方向均依原图保留。</p>
+            <span className="kicker">{content.campusMap.kicker}</span>
+            <h3>
+              {content.campusMap.titleLines[0]}
+              <br />
+              {content.campusMap.titleLines[1]}
+            </h3>
+            <p>{content.campusMap.description}</p>
           </div>
 
           <div className="campus-plan-viewer reveal-item">
             <div className="campus-plan-stage">
               <div className="campus-plan-media">
-                {campusPlans.map((plan) => (
+                {content.campusMap.plans.map((plan) => (
                   <SmartImage
                     key={plan.id}
                     src={plan.src}
@@ -218,17 +231,17 @@ export function OverviewSection() {
                 <a
                   href={selectedPlan.src}
                   target="_blank"
-                  rel="noreferrer"
-                  aria-label={`打开${selectedPlan.title}原图`}
+                  rel="noopener noreferrer"
+                  aria-label={`${content.campusMap.openOriginalAriaPrefix} ${selectedPlan.title} ${content.campusMap.openOriginalAriaSuffix}`.trim()}
                 >
                   <Maximize2 aria-hidden="true" />
-                  查看原图
+                  {shared.viewOriginal}
                 </a>
               </div>
             </div>
 
-            <div className="campus-plan-tabs" aria-label="校园空间图选择">
-              {campusPlans.map((plan) => (
+            <div className="campus-plan-tabs" aria-label={content.campusMap.selectorAria}>
+              {content.campusMap.plans.map((plan) => (
                 <button
                   type="button"
                   key={plan.id}

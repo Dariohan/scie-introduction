@@ -8,8 +8,15 @@ import { LandmarksSection } from "@/components/sections/LandmarksSection";
 import { CultureSection } from "@/components/sections/CultureSection";
 import { LifeSection } from "@/components/sections/LifeSection";
 import { FutureSection } from "@/components/sections/FutureSection";
+import type { SiteContent } from "@/lib/content";
+import type { Locale } from "@/lib/i18n";
 
-export function SchoolExperience() {
+type SchoolExperienceProps = {
+  locale: Locale;
+  content: SiteContent;
+};
+
+export function SchoolExperience({ locale, content }: SchoolExperienceProps) {
   const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
@@ -80,22 +87,29 @@ export function SchoolExperience() {
 
   return (
     <div className="site-root">
-      <SiteHeader />
-      <main>
-        <OverviewSection />
-        <LandmarksSection />
-        <CultureSection />
-        <LifeSection />
-        <FutureSection />
+      <a className="skip-link" href="#main-content">
+        {content.header.skipToContent}
+      </a>
+      <SiteHeader locale={locale} content={content} />
+      <main id="main-content" tabIndex={-1}>
+        <OverviewSection content={content.overview} shared={content.shared} />
+        <LandmarksSection content={content.landmarks} />
+        <CultureSection content={content.culture} />
+        <LifeSection content={content.life} />
+        <FutureSection
+          content={content.future}
+          worldContent={content.worldConnection}
+          shared={content.shared}
+        />
       </main>
       <button
         type="button"
         className={`back-to-top${showTop ? " is-visible" : ""}`}
         onClick={() => scrollTo({ top: 0, behavior: "smooth" })}
-        aria-label="返回页面顶部"
+        aria-label={content.backToTop.aria}
       >
         <ArrowUp aria-hidden="true" />
-        <span>回到顶部</span>
+        <span>{content.backToTop.label}</span>
       </button>
     </div>
   );

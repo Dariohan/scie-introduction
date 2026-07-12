@@ -2,14 +2,21 @@
 
 import { Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { navigation } from "@/lib/content";
 import { SmartImage } from "@/components/ui/SmartImage";
+import type { SiteContent } from "@/lib/content";
+import type { Locale } from "@/lib/i18n";
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  locale: Locale;
+  content: SiteContent;
+};
+
+export function SiteHeader({ locale, content }: SiteHeaderProps) {
+  const navigation = content.navigation;
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileNavRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState("overview");
+  const [active, setActive] = useState(navigation[0]?.id ?? "overview");
   const [progress, setProgress] = useState(0);
   const [solid, setSolid] = useState(false);
 
@@ -18,7 +25,9 @@ export function SiteHeader() {
       .map((item) => document.getElementById(item.id))
       .filter(Boolean) as HTMLElement[];
 
-    const onScroll = () => {
+    let frame = 0;
+
+    const updateScrollState = () => {
       const scrollable = document.documentElement.scrollHeight - innerHeight;
       setProgress(scrollable > 0 ? (scrollY / scrollable) * 100 : 0);
       setSolid(scrollY > 48);
@@ -30,20 +39,33 @@ export function SiteHeader() {
       if (current) setActive(current.id);
     };
 
-    onScroll();
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        updateScrollState();
+      });
+    };
+
+    updateScrollState();
     addEventListener("scroll", onScroll, { passive: true });
-    return () => removeEventListener("scroll", onScroll);
-  }, []);
+    addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      removeEventListener("scroll", onScroll);
+      removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [navigation]);
 
   useEffect(() => {
     if (!open) return;
 
     const main = document.querySelector("main");
     const menuItems = Array.from(
-      mobileNavRef.current?.querySelectorAll<HTMLButtonElement>("[data-menu-item]") ?? [],
+      mobileNavRef.current?.querySelectorAll<HTMLElement>("[data-menu-item]") ?? [],
     );
     const focusable = [menuButtonRef.current, ...menuItems].filter(
-      (item): item is HTMLButtonElement => Boolean(item),
+      (item): item is HTMLElement => Boolean(item),
     );
     const frame = requestAnimationFrame(() => menuItems[0]?.focus());
 
@@ -59,7 +81,7 @@ export function SiteHeader() {
       }
 
       if (event.key !== "Tab" || focusable.length === 0) return;
-      const currentIndex = focusable.indexOf(document.activeElement as HTMLButtonElement);
+      const currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
       const nextIndex = event.shiftKey
         ? currentIndex <= 0
           ? focusable.length - 1
@@ -84,8 +106,46 @@ export function SiteHeader() {
   const goTo = (id: string) => {
     if (open) requestAnimationFrame(() => menuButtonRef.current?.focus());
     setOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    document
+      .getElementById(id)
+      ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
   };
+
+  const languageHref = (language: Locale) => `../${language}/#${active}`;
+
+  const languageSwitcher = (mobile = false) => (
+    <nav
+      className={`language-switcher${mobile ? " language-switcher--mobile" : ""}`}
+      aria-label={content.header.languageSwitcherAria}
+    >
+      <a
+        className={`language-switcher__link${locale === "en" ? " is-active" : ""}`}
+        href={languageHref("en")}
+        hrefLang="en"
+        lang="en"
+        aria-label={content.header.englishName}
+        aria-current={locale === "en" ? "page" : undefined}
+        data-menu-item={mobile ? "" : undefined}
+        onClick={mobile ? () => setOpen(false) : undefined}
+      >
+        {content.header.englishLabel}
+      </a>
+      <span aria-hidden="true">/</span>
+      <a
+        className={`language-switcher__link${locale === "zh" ? " is-active" : ""}`}
+        href={languageHref("zh")}
+        hrefLang="zh-CN"
+        lang="zh-CN"
+        aria-label={content.header.chineseName}
+        aria-current={locale === "zh" ? "page" : undefined}
+        data-menu-item={mobile ? "" : undefined}
+        onClick={mobile ? () => setOpen(false) : undefined}
+      >
+        {content.header.chineseLabel}
+      </a>
+    </nav>
+  );
 
   return (
     <>
@@ -96,21 +156,24 @@ export function SiteHeader() {
           type="button"
           className="site-brand"
           onClick={() => goTo("overview")}
-          aria-label="返回学校概况"
+          aria-label={content.header.brandAria}
         >
-          <SmartImage src="/media/scie-emblem.svg" alt="深圳国际交流书院校徽" />
+          <SmartImage src="/media/scie-emblem.svg" alt={content.shared.emblemAlt} />
           <span>
-            <strong>深圳国际交流书院</strong>
-            <small>立足深圳 · 连接世界</small>
+            <strong data-short-name={content.shared.schoolAbbreviation}>
+              {content.shared.schoolName}
+            </strong>
+            <small>{content.shared.tagline}</small>
           </span>
         </button>
 
-        <nav className="desktop-nav" aria-label="主导航">
+        <nav className="desktop-nav" aria-label={content.header.desktopNavigationAria}>
           {navigation.map((item) => (
             <button
               type="button"
               key={item.id}
               className={active === item.id ? "is-active" : ""}
+              aria-current={active === item.id ? "location" : undefined}
               onClick={() => goTo(item.id)}
             >
               {item.label}
@@ -118,17 +181,24 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <button
-          ref={menuButtonRef}
-          type="button"
-          className="menu-toggle"
-          aria-expanded={open}
-          aria-controls="mobile-navigation"
-          aria-label={open ? "关闭导航" : "打开导航"}
-          onClick={() => setOpen((value) => !value)}
-        >
-          {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </button>
+        <div className="site-header__actions">
+          {languageSwitcher()}
+          <button
+            ref={menuButtonRef}
+            type="button"
+            className="menu-toggle"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={
+              open
+                ? content.header.closeNavigationAria
+                : content.header.openNavigationAria
+            }
+            onClick={() => setOpen((value) => !value)}
+          >
+            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
+        </div>
 
         <div className="reading-progress" aria-hidden="true">
           <span style={{ width: `${progress}%` }} />
@@ -142,10 +212,10 @@ export function SiteHeader() {
         aria-hidden={!open}
         role="dialog"
         aria-modal="true"
-        aria-label="移动端主导航"
+        aria-label={content.header.mobileNavigationAria}
       >
         <div className="mobile-nav__inner">
-          <p>选择一段旅程</p>
+          <p>{content.header.mobileIntro}</p>
           {navigation.map((item, index) => (
             <button
               key={item.id}
@@ -157,7 +227,8 @@ export function SiteHeader() {
               {item.label}
             </button>
           ))}
-          <small>向下滚动，走进深国交</small>
+          {languageSwitcher(true)}
+          <small>{content.header.mobileOutro}</small>
         </div>
       </div>
     </>

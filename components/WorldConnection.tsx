@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { SmartImage } from "@/components/ui/SmartImage";
+import type { SiteContent } from "@/lib/content";
 
 type MotionState = {
   pointerX: number;
@@ -12,7 +13,12 @@ type MotionState = {
 const WORLD_MAP_PATH = "/media/world-map.svg";
 const EMBLEM_PATH = "/media/scie-emblem.svg";
 
-export function WorldConnection() {
+type WorldConnectionProps = {
+  content: SiteContent["worldConnection"];
+  emblemAlt: string;
+};
+
+export function WorldConnection({ content, emblemAlt }: WorldConnectionProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const motionRef = useRef<MotionState>({ pointerX: 0, pointerY: 0, scroll: 0 });
@@ -275,27 +281,24 @@ export function WorldConnection() {
         });
 
         timeline
-          .fromTo(
-            ".wc-intro",
-            { autoAlpha: 0, y: 24 },
-            { autoAlpha: 1, y: 0, duration: 0.13, ease: "power2.out" },
-            0,
-          )
+          // Keep the opening message visible as soon as the pinned chapter enters.
+          // A scroll-driven fade-in left the first mobile viewport almost empty.
+          .set(".wc-intro", { autoAlpha: 1, y: 0 }, 0)
           .fromTo(
             ".wc-map-stage",
-            { autoAlpha: 0, scale: 0.91 },
+            { autoAlpha: 0.62, scale: 0.91 },
             { autoAlpha: 1, scale: 1, duration: 0.14, ease: "power2.out" },
             0.015,
           )
           .fromTo(
             ".wc-map-image",
-            { opacity: 0 },
+            { opacity: 0.2 },
             { opacity: 0.4, duration: 0.13 },
             0.035,
           )
           .fromTo(
             ".wc-city-shenzhen",
-            { autoAlpha: 0 },
+            { autoAlpha: 0.28 },
             { autoAlpha: 1, duration: 0.055 },
             0.075,
           )
@@ -446,15 +449,13 @@ export function WorldConnection() {
         <header className="wc-intro">
           <p className="wc-kicker">
             <span>05</span>
-            未来寄语
+            {content.kicker}
           </p>
           <h2 id={`${svgId}-ending-title`}>
-            <span>从深圳，</span>
-            <span>连接世界</span>
+            <span>{content.titleLines[0]}</span>
+            <span>{content.titleLines[1]}</span>
           </h2>
-          <p className="wc-intro-copy">
-            世界不只是远方，也是每一位深国交学子即将抵达的课堂。
-          </p>
+          <p className="wc-intro-copy">{content.introCopy}</p>
         </header>
 
         <div className="wc-map-stage">
@@ -465,7 +466,7 @@ export function WorldConnection() {
             className="wc-routes"
             viewBox="0 0 784 459"
             role="img"
-            aria-label="深圳连接伦敦、纽约、东京与新加坡"
+            aria-label={content.routesAria}
             preserveAspectRatio="xMidYMid meet"
           >
             <defs>
@@ -532,7 +533,7 @@ export function WorldConnection() {
                   filter={`url(#${svgId}-point-glow)`}
                 />
                 <text className="wc-city-name wc-city-name-primary" x="-12" y="-13" textAnchor="end">
-                  深圳
+                  {content.cities.shenzhen}
                 </text>
               </g>
             </g>
@@ -542,7 +543,7 @@ export function WorldConnection() {
                 <circle className="wc-city-point" r="3" />
                 <circle className="wc-city-ring" r="7" />
                 <text className="wc-city-name" x="-10" y="-10" textAnchor="end">
-                  伦敦
+                  {content.cities.london}
                 </text>
               </g>
             </g>
@@ -551,7 +552,7 @@ export function WorldConnection() {
                 <circle className="wc-city-point" r="3" />
                 <circle className="wc-city-ring" r="7" />
                 <text className="wc-city-name" x="-10" y="-10" textAnchor="end">
-                  纽约
+                  {content.cities.newYork}
                 </text>
               </g>
             </g>
@@ -560,7 +561,7 @@ export function WorldConnection() {
                 <circle className="wc-city-point" r="3" />
                 <circle className="wc-city-ring" r="7" />
                 <text className="wc-city-name" x="-10" y="-10" textAnchor="end">
-                  东京
+                  {content.cities.tokyo}
                 </text>
               </g>
             </g>
@@ -569,7 +570,7 @@ export function WorldConnection() {
                 <circle className="wc-city-point" r="3" />
                 <circle className="wc-city-ring" r="7" />
                 <text className="wc-city-name" x="11" y="18">
-                  新加坡
+                  {content.cities.singapore}
                 </text>
               </g>
             </g>
@@ -577,7 +578,7 @@ export function WorldConnection() {
 
           <div className="wc-network-caption">
             <span className="wc-network-dot" aria-hidden="true" />
-            全球坐标正在点亮
+            {content.networkCaption}
           </div>
         </div>
 
@@ -588,30 +589,30 @@ export function WorldConnection() {
             <SmartImage
               className="wc-emblem-image"
               src={EMBLEM_PATH}
-              alt="深圳国际交流书院校徽"
+              alt={emblemAlt}
               draggable="false"
             />
           </div>
 
           <div className="wc-final-copy">
-            <p className="wc-final-kicker">深圳国际交流书院</p>
-            <h3>让世界看见你的坐标</h3>
+            <p className="wc-final-kicker">{content.finalKicker}</p>
+            <h3>{content.finalTitle}</h3>
             <span className="wc-final-line" aria-hidden="true" />
             <p>
-              以深圳为起点，以求知为航向。
+              {content.finalLines[0]}
               <br />
-              愿每一次成长，都让世界更加相连。
+              {content.finalLines[1]}
             </p>
           </div>
         </div>
 
         <div className="wc-scroll-cue" aria-hidden="true">
-          <span>继续向下 · 汇入校徽</span>
+          <span>{content.scrollCue}</span>
           <i />
         </div>
 
         <div className="wc-progress-rail" aria-hidden="true">
-          <span>连接中</span>
+          <span>{content.progress}</span>
           <i>
             <b />
           </i>
@@ -619,8 +620,8 @@ export function WorldConnection() {
 
         <noscript>
           <div className="wc-noscript">
-            <strong>深圳国际交流书院连接世界</strong>
-            <span>以深圳为起点，以求知为航向。</span>
+            <strong>{content.noscriptTitle}</strong>
+            <span>{content.noscriptBody}</span>
           </div>
         </noscript>
       </div>
@@ -1211,7 +1212,7 @@ export function WorldConnection() {
 
           .wc-kicker {
             margin-bottom: 11px;
-            font-size: 10px;
+            font-size: 11px;
           }
 
           .wc-kicker span::after {
@@ -1226,7 +1227,7 @@ export function WorldConnection() {
           .wc-intro-copy {
             max-width: 330px;
             margin-top: 12px;
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.7;
           }
 
@@ -1254,7 +1255,7 @@ export function WorldConnection() {
 
           .wc-network-caption {
             bottom: -22px;
-            font-size: 9px;
+            font-size: 10px;
           }
 
           .wc-emblem-disc {
@@ -1274,7 +1275,7 @@ export function WorldConnection() {
 
           .wc-final-kicker {
             margin-bottom: 7px;
-            font-size: 9px;
+            font-size: 10px;
           }
 
           .wc-final-copy h3 {
@@ -1286,12 +1287,86 @@ export function WorldConnection() {
           }
 
           .wc-final-copy > p:last-child {
-            font-size: 11px;
+            font-size: 13px;
             line-height: 1.75;
           }
 
           .wc-scroll-cue {
             bottom: max(14px, env(safe-area-inset-bottom));
+          }
+        }
+
+        @media (max-width: 600px) and (max-height: 650px) and (orientation: landscape) {
+          .world-connection {
+            min-height: 360vh;
+          }
+
+          .wc-sticky {
+            min-height: 100svh;
+          }
+
+          .wc-intro {
+            top: calc(var(--header-height) + 6px);
+            width: calc(100% - 48px);
+          }
+
+          .wc-kicker {
+            margin-bottom: 5px;
+            font-size: 10px;
+          }
+
+          .wc-intro-copy {
+            max-width: 440px;
+            margin-top: 6px;
+            font-size: 12.5px;
+            line-height: 1.45;
+          }
+
+          .wc-map-stage {
+            top: 58%;
+            width: 80vw;
+          }
+
+          .wc-network-caption {
+            bottom: 18px;
+            font-size: 10px;
+          }
+
+          .wc-emblem-disc {
+            top: 45%;
+            width: min(42vh, 168px);
+          }
+
+          .wc-emblem-aura {
+            top: 45%;
+            width: min(50vh, 196px);
+          }
+
+          .wc-final-copy {
+            top: calc(45% + min(20vh, 64px));
+            width: calc(100% - 40px);
+          }
+
+          .wc-final-kicker {
+            margin-bottom: 4px;
+            font-size: 10px;
+          }
+
+          .wc-final-copy h3 {
+            font-size: clamp(20px, 7vh, 24px);
+          }
+
+          .wc-final-line {
+            margin: 8px auto;
+          }
+
+          .wc-final-copy > p:last-child {
+            font-size: 12px;
+            line-height: 1.45;
+          }
+
+          .wc-scroll-cue {
+            display: none;
           }
         }
 
