@@ -46,7 +46,7 @@ function addSiteBasePath(source) {
       `${sitePrefix}/$1/`,
     )
     .replace(
-      /(?<![A-Za-z0-9._/-])\/(og\.png|favicon\.svg)\b/g,
+      /(?<![A-Za-z0-9._/-])\/(og(?:-en)?\.png|favicon\.svg)\b/g,
       `${sitePrefix}/$1`,
     );
 }
@@ -56,36 +56,79 @@ await access(workerPath);
 
 workerPath.searchParams.set("static", `${process.pid}-${Date.now()}`);
 const { default: worker } = await import(workerPath.href);
-const response = await worker.fetch(
-  new Request("http://127.0.0.1/", {
-    headers: { accept: "text/html" },
-  }),
-  {
-    ASSETS: {
-      fetch: async () => new Response("未找到资源", { status: 404 }),
-    },
+const workerEnvironment = {
+  ASSETS: {
+    fetch: async () => new Response("Resource not found", { status: 404 }),
   },
-  {
-    waitUntil() {},
-    passThroughOnException() {},
-  },
-);
+};
+const workerContext = {
+  waitUntil() {},
+  passThroughOnException() {},
+};
 
-if (!response.ok) {
-  throw new Error(`生成静态首页失败：HTTP ${response.status}`);
+async function renderLanguagePage(language) {
+  const response = await worker.fetch(
+    new Request(`http://127.0.0.1/${language}`, {
+      headers: { accept: "text/html" },
+    }),
+    workerEnvironment,
+    workerContext,
+  );
+
+  if (!response.ok) {
+    throw new Error(`生成 ${language} 静态页面失败：HTTP ${response.status}`);
+  }
+
+  return response.text();
 }
 
-const html = await response.text();
-if (!html.includes('lang="zh-CN"') || !html.includes("深圳国际交流书院")) {
-  throw new Error("生成的首页缺少中文站点标识，已停止写入。");
+const [englishHtml, chineseHtml] = await Promise.all([
+  renderLanguagePage("en"),
+  renderLanguagePage("zh"),
+]);
+
+if (
+  !englishHtml.includes('lang="en"') ||
+  !englishHtml.includes("Shenzhen College of International Education")
+) {
+  throw new Error("生成的英文页面缺少英文站点标识，已停止写入。");
 }
+if (!chineseHtml.includes('lang="zh-CN"') || !chineseHtml.includes("深圳国际交流书院")) {
+  throw new Error("生成的中文页面缺少中文站点标识，已停止写入。");
+}
+
+const rootRedirectHtml = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="refresh" content="0; url=./en/" />
+    <link rel="canonical" href="./en/" />
+    <link rel="alternate" hreflang="en" href="./en/" />
+    <link rel="alternate" hreflang="zh-CN" href="./zh/" />
+    <link rel="alternate" hreflang="x-default" href="./en/" />
+    <title>Shenzhen College of International Education</title>
+  </head>
+  <body>
+    <p>
+      <a href="./en/">Continue to the English website</a>
+      ·
+      <a href="./zh/" lang="zh-CN">进入中文网站</a>
+    </p>
+  </body>
+</html>`;
 
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
 await cp(clientRoot, outputRoot, { recursive: true });
-await writeFile(new URL("../网站成品/index.html", import.meta.url), html, "utf8");
+await mkdir(join(outputRoot, "en"), { recursive: true });
+await mkdir(join(outputRoot, "zh"), { recursive: true });
+await writeFile(join(outputRoot, "index.html"), rootRedirectHtml, "utf8");
+await writeFile(join(outputRoot, "en", "index.html"), englishHtml, "utf8");
+await writeFile(join(outputRoot, "zh", "index.html"), chineseHtml, "utf8");
 await writeFile(new URL("../网站成品/.nojekyll", import.meta.url), "", "utf8");
 await access(join(outputRoot, "og.png"));
+await access(join(outputRoot, "og-en.png"));
 await access(join(outputRoot, "favicon.svg"));
 
 const publicSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
@@ -95,10 +138,13 @@ if (publicSiteUrl) {
   const normalizedPublicSiteUrl = normalizedUrl.toString();
   for (const expectedUrl of [
     `${normalizedPublicSiteUrl}og.png`,
+    `${normalizedPublicSiteUrl}og-en.png`,
     `${normalizedPublicSiteUrl}media/scie-emblem.svg`,
+    `${normalizedPublicSiteUrl}en/`,
+    `${normalizedPublicSiteUrl}zh/`,
   ]) {
-    if (!html.includes(expectedUrl)) {
-      throw new Error(`静态首页元数据地址错误：${expectedUrl}`);
+    if (!englishHtml.includes(expectedUrl) && !chineseHtml.includes(expectedUrl)) {
+      throw new Error(`静态页面元数据地址错误：${expectedUrl}`);
     }
   }
 }
@@ -115,7 +161,7 @@ const publicResourcePattern = new RegExp(
   "g",
 );
 const unscopedResourcePattern =
-  /(?<![A-Za-z0-9._/-])\/(?:assets|media)\//g;
+  /(?<![A-Za-z0-9._/-])\/(?:assets|media)\//;
 const references = new Set();
 
 for (const file of textFiles) {
@@ -143,5 +189,5 @@ const packageJson = JSON.parse(
 );
 
 console.log(
-  `静态成品已生成：${outputRoot}\n项目：${packageJson.name}\n基础路径：${siteBasePath}\n已核对资源：${references.size} 项`,
+  `双语静态成品已生成：${outputRoot}\n项目：${packageJson.name}\n默认语言：en\n语言路由：en、zh\n基础路径：${siteBasePath}\n已核对资源：${references.size} 项`,
 );

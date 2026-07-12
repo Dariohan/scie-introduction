@@ -3,48 +3,82 @@
 import {
   ArrowLeft,
   ArrowRight,
+  LoaderCircle,
   Pause,
   Play,
+  RotateCcw,
 } from "lucide-react";
 import { useRef, useState } from "react";
-import { campusGallery, cityLandmarks, rednotePosts } from "@/lib/content";
+import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { RednoteLink } from "@/components/ui/RednoteLink";
 
-export function LandmarksSection() {
+type VideoStatus = "idle" | "loading" | "playing" | "paused" | "stalled" | "error";
+
+type LandmarksSectionProps = {
+  content: SiteContent["landmarks"];
+};
+
+export function LandmarksSection({ content }: LandmarksSectionProps) {
   const [galleryIndex, setGalleryIndex] = useState(0);
-  const [playing, setPlaying] = useState(false);
+  const [videoStatus, setVideoStatus] = useState<VideoStatus>("idle");
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  const { gallery, video } = content;
 
   const changeSlide = (direction: number) => {
     setGalleryIndex((current) =>
-      (current + direction + campusGallery.length) % campusGallery.length,
+      (current + direction + gallery.items.length) % gallery.items.length,
     );
   };
 
   const toggleVideo = async () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      await video.play();
-      setPlaying(true);
+    const player = videoRef.current;
+    if (!player) return;
+
+    if (videoStatus === "error") {
+      setVideoStatus("loading");
+      player.load();
+      try {
+        await player.play();
+      } catch {
+        setVideoStatus("error");
+      }
+      return;
+    }
+
+    if (player.paused) {
+      setVideoStatus("loading");
+      try {
+        await player.play();
+      } catch {
+        setVideoStatus("error");
+      }
     } else {
-      video.pause();
-      setPlaying(false);
+      player.pause();
     }
   };
 
-  const selected = campusGallery[galleryIndex];
+  const selected = gallery.items[galleryIndex];
+  const isPlaying = videoStatus === "playing";
+  const isLoading = videoStatus === "loading" || videoStatus === "stalled";
+  const videoButtonLabel =
+    videoStatus === "error" ? video.retry : isPlaying ? video.pause : isLoading ? video.loading : video.play;
+  const videoStatusLabel =
+    videoStatus === "error"
+      ? video.error
+      : videoStatus === "stalled"
+        ? video.stalled
+        : videoStatus === "loading"
+          ? video.loading
+          : "";
 
   return (
     <section id="landmarks" className="landmarks-section section-dark">
       <div className="section-shell">
         <SectionHeading
-          number="02"
-          eyebrow="地标与风景"
-          title="建筑让人向上，风景让时间慢下来"
-          description="穿过连廊、台阶与垂直花园，校园以一种独属于深圳的方式，把密度、自然与日常叠在一起。"
+          {...content.heading}
           inverted
         />
 
@@ -52,28 +86,28 @@ export function LandmarksSection() {
           <div className="landmark-feature__image">
             <SmartImage
               src="/media/campus-starlight-stairs.jpg"
-              alt="星光大道台阶与空中连廊"
+              alt={content.feature.imageAlt}
               loading="lazy"
               decoding="async"
             />
-            <span>标志空间 · 星光大道</span>
+            <span>{content.feature.badge}</span>
           </div>
           <blockquote>
             <span>“</span>
-            <p>踏上这段台阶，才能通往教学楼。此时，你永远都在往上走。</p>
-            <footer>来自校园素材中的一句话</footer>
+            <p>{content.feature.quote}</p>
+            <footer>{content.feature.source}</footer>
           </blockquote>
         </div>
 
         <div className="gallery-block">
           <div className="subsection-title subsection-title--light reveal-item">
-            <span className="kicker">互动影像馆</span>
-            <h3>把校园的光，<br />一帧一帧收藏。</h3>
+            <span className="kicker">{gallery.kicker}</span>
+            <h3>{gallery.titleLines[0]}<br />{gallery.titleLines[1]}</h3>
           </div>
 
           <div className="gallery-viewer reveal-item">
             <div className="gallery-stage">
-              {campusGallery.map((item, index) => (
+              {gallery.items.map((item, index) => (
                 <figure
                   key={item.src}
                   className={galleryIndex === index ? "is-active" : ""}
@@ -90,16 +124,16 @@ export function LandmarksSection() {
               </div>
               <div className="gallery-stage__count">
                 <strong>{String(galleryIndex + 1).padStart(2, "0")}</strong>
-                <span>/ {String(campusGallery.length).padStart(2, "0")}</span>
+                <span>/ {String(gallery.items.length).padStart(2, "0")}</span>
               </div>
             </div>
 
             <div className="gallery-controls">
-              <button type="button" onClick={() => changeSlide(-1)} aria-label="上一张校园照片">
+              <button type="button" onClick={() => changeSlide(-1)} aria-label={gallery.previousAria}>
                 <ArrowLeft aria-hidden="true" />
               </button>
-              <div className="gallery-thumbs" aria-label="校园照片选择">
-                {campusGallery.map((item, index) => (
+              <div className="gallery-thumbs" aria-label={gallery.selectorAria}>
+                {gallery.items.map((item, index) => (
                   <button
                     type="button"
                     aria-pressed={galleryIndex === index}
@@ -118,44 +152,42 @@ export function LandmarksSection() {
                   </button>
                 ))}
               </div>
-              <button type="button" onClick={() => changeSlide(1)} aria-label="下一张校园照片">
+              <button type="button" onClick={() => changeSlide(1)} aria-label={gallery.nextAria}>
                 <ArrowRight aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          <RednoteLink {...rednotePosts.campus} inverted />
+          <RednoteLink {...content.rednote} inverted />
         </div>
 
         <div className="panorama-block">
           <div className="panorama-copy reveal-item">
-            <span className="kicker">校园实景</span>
-            <h3>抬头，看见树冠、连廊与天空。</h3>
-            <p>
-              连廊穿过树冠，阳光落进校园中庭。一张真实照片，保留此刻最完整的空间与光线。
-            </p>
+            <span className="kicker">{content.panorama.kicker}</span>
+            <h3>{content.panorama.title}</h3>
+            <p>{content.panorama.body}</p>
           </div>
 
           <figure className="panorama-view reveal-item">
             <SmartImage
               src="/media/campus-tree-canopy.jpg"
-              alt="树荫与空中连廊实景"
+              alt={content.panorama.imageAlt}
               loading="lazy"
               decoding="async"
             />
             <figcaption>
-              <span>校园实景</span>
-              <strong>树冠、连廊与天空</strong>
+              <span>{content.panorama.captionLabel}</span>
+              <strong>{content.panorama.captionTitle}</strong>
             </figcaption>
           </figure>
         </div>
 
         <div className="city-and-video">
           <div className="city-card reveal-item">
-            <span className="kicker">深圳城市名片</span>
-            <h3>校园之外，整座城市都是第二课堂。</h3>
+            <span className="kicker">{content.city.kicker}</span>
+            <h3>{content.city.title}</h3>
             <div className="city-landmarks">
-              {cityLandmarks.map((item) => (
+              {content.city.places.map((item) => (
                 <article key={item.name}>
                   <span>{item.index}</span>
                   <div>
@@ -167,25 +199,62 @@ export function LandmarksSection() {
             </div>
           </div>
 
-          <div className="video-card reveal-item">
+          <div className={`video-card reveal-item${videoStatus === "error" ? " has-error" : ""}`}>
+            <SmartImage
+              className="video-card__fallback"
+              src="/media/scie-emblem-fallback.jpg"
+              alt=""
+              aria-hidden="true"
+            />
             <video
+              id="emblem-motion-study"
               ref={videoRef}
-              src="/media/emblem-study.mp4"
               muted
               playsInline
               loop
               preload="metadata"
-              onPlay={() => setPlaying(true)}
-              onPause={() => setPlaying(false)}
-              aria-label="校徽视觉动效档案"
-            />
+              poster="/media/scie-emblem-fallback.jpg"
+              onLoadStart={() => setVideoStatus("loading")}
+              onLoadedMetadata={() => setVideoStatus((current) => current === "playing" ? current : "idle")}
+              onLoadedData={() => setVideoStatus((current) => current === "playing" ? current : "idle")}
+              onCanPlay={() => setVideoStatus((current) => current === "playing" ? current : "idle")}
+              onPlaying={() => setVideoStatus("playing")}
+              onPause={() => setVideoStatus((current) => current === "error" ? current : "paused")}
+              onWaiting={() => setVideoStatus("loading")}
+              onStalled={() => setVideoStatus("stalled")}
+              onError={() => setVideoStatus("error")}
+              aria-label={video.aria}
+              aria-describedby="emblem-motion-status"
+            >
+              <source src="/media/emblem-study.mp4" type="video/mp4" />
+            </video>
             <div className="video-card__overlay">
-              <span>视觉档案</span>
-              <h3>校徽图形演绎</h3>
-              <p>这里展示素材中的视觉研究；终章则由实时网页技术重新实现。</p>
-              <button type="button" onClick={toggleVideo}>
-                {playing ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
-                {playing ? "暂停" : "播放"}
+              <span>{video.kicker}</span>
+              <h3>{video.title}</h3>
+              <p>{video.body}</p>
+              <span
+                id="emblem-motion-status"
+                className="video-card__status"
+                role="status"
+                aria-live="polite"
+              >
+                {videoStatusLabel}
+              </span>
+              <button
+                type="button"
+                onClick={toggleVideo}
+                aria-controls="emblem-motion-study"
+              >
+                {videoStatus === "error" ? (
+                  <RotateCcw aria-hidden="true" />
+                ) : isLoading ? (
+                  <LoaderCircle className="is-spinning" aria-hidden="true" />
+                ) : isPlaying ? (
+                  <Pause aria-hidden="true" />
+                ) : (
+                  <Play aria-hidden="true" />
+                )}
+                {videoButtonLabel}
               </button>
             </div>
           </div>
