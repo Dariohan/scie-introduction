@@ -13,6 +13,8 @@ type SiteHeaderProps = {
 
 const readingMarkerRatio = 0.38;
 const languageViewParameter = "view";
+const defaultEntryParameter = "entry";
+const defaultEntryValue = "cover";
 
 export function SiteHeader({ locale, content }: SiteHeaderProps) {
   const navigation = content.navigation;
@@ -61,6 +63,59 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
   }, [navigation]);
 
   useEffect(() => {
+    const entryUrl = new URL(location.href);
+    if (
+      locale !== "en" ||
+      entryUrl.searchParams.get(defaultEntryParameter) !== defaultEntryValue
+    ) {
+      return;
+    }
+
+    const root = document.documentElement;
+    const previousScrollBehavior = root.style.scrollBehavior;
+    const previousScrollRestoration = history.scrollRestoration;
+    let cleanedUrl = false;
+    let restoredScrollPolicy = false;
+
+    const showEnglishCover = () => {
+      root.style.scrollBehavior = "auto";
+      scrollTo({ top: 0, left: 0, behavior: "auto" });
+      root.style.scrollBehavior = previousScrollBehavior;
+
+      if (!cleanedUrl) {
+        entryUrl.searchParams.delete(defaultEntryParameter);
+        entryUrl.hash = "";
+        history.replaceState(
+          history.state,
+          "",
+          `${entryUrl.pathname}${entryUrl.search}`,
+        );
+        cleanedUrl = true;
+      }
+    };
+
+    const restoreScrollPolicy = () => {
+      if (restoredScrollPolicy) return;
+      history.scrollRestoration = previousScrollRestoration;
+      restoredScrollPolicy = true;
+    };
+
+    history.scrollRestoration = "manual";
+    showEnglishCover();
+    const frame = requestAnimationFrame(showEnglishCover);
+    const timer = window.setTimeout(() => {
+      showEnglishCover();
+      restoreScrollPolicy();
+    }, 320);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
+      restoreScrollPolicy();
+    };
+  }, [locale]);
+
+  useEffect(() => {
     const encodedPosition = new URLSearchParams(location.search).get(
       languageViewParameter,
     );
@@ -91,10 +146,11 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
       if (!cleanedUrl) {
         const cleanUrl = new URL(location.href);
         cleanUrl.searchParams.delete(languageViewParameter);
+        cleanUrl.hash = "";
         history.replaceState(
           history.state,
           "",
-          `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`,
+          `${cleanUrl.pathname}${cleanUrl.search}`,
         );
         cleanedUrl = true;
       }
@@ -206,7 +262,7 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
       languageViewParameter,
       `${sectionId}:${sectionProgress.toFixed(4)}`,
     );
-    target.hash = sectionId;
+    target.hash = "";
     location.assign(target.toString());
   };
 

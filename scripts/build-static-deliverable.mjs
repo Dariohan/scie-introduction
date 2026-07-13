@@ -97,10 +97,11 @@ if (!chineseHtml.includes('lang="zh-CN"') || !chineseHtml.includes("深圳国际
   throw new Error("生成的中文页面缺少中文站点标识，已停止写入。");
 }
 
+const defaultEnglishEntry = "./en/?entry=cover";
 const rootEnglishHtml = englishHtml
   .replace(
     "</head>",
-    '<meta http-equiv="refresh" content="0; url=./en/" /></head>',
+    `<script>window.location.replace("${defaultEnglishEntry}");</script><meta http-equiv="refresh" content="0; url=${defaultEnglishEntry}" /></head>`,
   )
   .replaceAll('href="../en/', 'href="./en/')
   .replaceAll('href="../zh/', 'href="./zh/');
@@ -108,7 +109,12 @@ const rootEnglishHtml = englishHtml
 if (
   !rootEnglishHtml.includes('id="main-content"') ||
   !rootEnglishHtml.includes("Shenzhen College of International Education") ||
-  !rootEnglishHtml.includes('<meta http-equiv="refresh" content="0; url=./en/"') ||
+  !rootEnglishHtml.includes(
+    '<script>window.location.replace("./en/?entry=cover");</script>',
+  ) ||
+  !rootEnglishHtml.includes(
+    '<meta http-equiv="refresh" content="0; url=./en/?entry=cover"',
+  ) ||
   rootEnglishHtml.includes("Continue to the English website") ||
   rootEnglishHtml.includes("进入中文网站")
 ) {
