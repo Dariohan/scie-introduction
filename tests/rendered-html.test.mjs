@@ -146,8 +146,8 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
   await Promise.all([
     access(new URL("../public/media/scie-emblem.svg", import.meta.url)),
     access(new URL("../public/media/world-map.svg", import.meta.url)),
-    access(new URL("../public/media/campus-tree-canopy.jpg", import.meta.url)),
-    access(new URL("../public/media/mobile/campus-tree-canopy.jpg", import.meta.url)),
+    access(new URL("../public/media/scie-campus-hero.webp", import.meta.url)),
+    access(new URL("../public/media/mobile/scie-campus-hero.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-overview.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-dining.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-support.webp", import.meta.url)),
