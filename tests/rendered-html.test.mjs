@@ -27,7 +27,9 @@ async function render(pathname) {
 test("根路径以英文为默认语言", async () => {
   const response = await render("/");
   assert.ok([307, 308].includes(response.status));
-  assert.equal(new URL(response.headers.get("location"), "http://localhost").pathname, "/en");
+  const target = new URL(response.headers.get("location"), "http://localhost");
+  assert.equal(target.pathname, "/en");
+  assert.equal(target.searchParams.get("entry"), "cover");
 });
 
 test("服务端渲染完整英文站点", async () => {
@@ -131,10 +133,18 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
   assert.match(worldConnection, /\.set\("\.wc-intro", \{ autoAlpha: 1, y: 0 \}/);
   assert.doesNotMatch(siteHeader, /localStorage|sessionStorage|document\.cookie/);
   assert.match(siteHeader, /languageViewParameter = "view"/);
+  assert.match(siteHeader, /defaultEntryParameter = "entry"/);
+  assert.match(siteHeader, /defaultEntryValue = "cover"/);
+  assert.match(siteHeader, /history\.scrollRestoration = "manual"/);
+  assert.match(siteHeader, /showEnglishCover/);
   assert.match(siteHeader, /sectionProgress\.toFixed\(4\)/);
   assert.match(siteHeader, /history\.replaceState/);
+  assert.match(siteHeader, /cleanUrl\.hash = ""/);
+  assert.match(siteHeader, /target\.hash = ""/);
   assert.match(staticBuilder, /const rootEnglishHtml = englishHtml/);
   assert.match(staticBuilder, /meta http-equiv="refresh"/);
+  assert.match(staticBuilder, /window\.location\.replace/);
+  assert.match(staticBuilder, /\.\/en\/\?entry=cover/);
   assert.doesNotMatch(staticBuilder, /const rootRedirectHtml/);
   assert.match(i18n, /defaultLocale: Locale = "en"/);
   assert.match(content, /Shenzhen College of International Education/);
