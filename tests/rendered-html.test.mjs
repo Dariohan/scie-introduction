@@ -57,6 +57,10 @@ test("服务端渲染完整英文站点", async () => {
   assert.match(html, /href="\.\.\/zh\/#overview"/);
   assert.match(html, /poster="\/media\/scie-emblem-fallback\.jpg"/);
   assert.match(html, /<source src="\/media\/emblem-study\.mp4" type="video\/mp4"/);
+  assert.match(html, /<video[^>]*muted=""/i);
+  assert.match(html, /<video[^>]*playsinline=""/i);
+  assert.match(html, /<video[^>]*loop=""/i);
+  assert.doesNotMatch(html, /The emblem in motion|Visual Archive/);
   assert.match(html, /SCIE expressed through four qualities/);
   for (const quality of ["Sincerity", "Compassion", "Industrious", "Enthusiasm"]) {
     assert.match(html, new RegExp(quality));

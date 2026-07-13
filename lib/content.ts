@@ -294,9 +294,6 @@ const zhContent = {
     },
     video: {
       aria: "校徽视觉动效档案",
-      kicker: "视觉档案",
-      title: "校徽图形演绎",
-      body: "这里展示素材中的视觉研究；终章则由实时网页技术重新实现。",
       play: "播放",
       pause: "暂停",
       loading: "视频加载中",
@@ -901,9 +898,6 @@ const enContent = {
     },
     video: {
       aria: "SCIE emblem motion study",
-      kicker: "Visual Archive",
-      title: "The emblem in motion",
-      body: "This film presents a visual study from the supplied materials; the final chapter reimagines it with real-time web technology.",
       play: "Play",
       pause: "Pause",
       loading: "Loading video",

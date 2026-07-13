@@ -8,7 +8,7 @@ import {
   Play,
   RotateCcw,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
@@ -27,6 +27,37 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
 
   const { gallery, video } = content;
 
+  useEffect(() => {
+    const player = videoRef.current;
+    if (!player || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+          if (!player.paused || player.error) return;
+
+          player.muted = true;
+          player.defaultMuted = true;
+          player.playsInline = true;
+          setVideoStatus("loading");
+          void player.play().catch(() => {
+            setVideoStatus(player.error ? "error" : "paused");
+          });
+          return;
+        }
+
+        if (!player.paused) player.pause();
+      },
+      { threshold: [0, 0.35, 0.75] },
+    );
+
+    observer.observe(player);
+    return () => {
+      observer.disconnect();
+      player.pause();
+    };
+  }, []);
+
   const changeSlide = (direction: number) => {
     setGalleryIndex((current) =>
       (current + direction + gallery.items.length) % gallery.items.length,
@@ -43,7 +74,7 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
       try {
         await player.play();
       } catch {
-        setVideoStatus("error");
+        setVideoStatus(player.error ? "error" : "paused");
       }
       return;
     }
@@ -53,7 +84,7 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
       try {
         await player.play();
       } catch {
-        setVideoStatus("error");
+        setVideoStatus(player.error ? "error" : "paused");
       }
     } else {
       player.pause();
@@ -246,9 +277,6 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
               <source src="/media/emblem-study.mp4" type="video/mp4" />
             </video>
             <div className="video-card__overlay">
-              <span>{video.kicker}</span>
-              <h3>{video.title}</h3>
-              <p>{video.body}</p>
               <span
                 id="emblem-motion-status"
                 className="video-card__status"
