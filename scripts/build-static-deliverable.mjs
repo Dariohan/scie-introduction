@@ -97,33 +97,30 @@ if (!chineseHtml.includes('lang="zh-CN"') || !chineseHtml.includes("深圳国际
   throw new Error("生成的中文页面缺少中文站点标识，已停止写入。");
 }
 
-const rootRedirectHtml = `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="refresh" content="0; url=./en/" />
-    <link rel="canonical" href="./en/" />
-    <link rel="alternate" hreflang="en" href="./en/" />
-    <link rel="alternate" hreflang="zh-CN" href="./zh/" />
-    <link rel="alternate" hreflang="x-default" href="./en/" />
-    <title>Shenzhen College of International Education</title>
-  </head>
-  <body>
-    <p>
-      <a href="./en/">Continue to the English website</a>
-      ·
-      <a href="./zh/" lang="zh-CN">进入中文网站</a>
-    </p>
-  </body>
-</html>`;
+const rootEnglishHtml = englishHtml
+  .replace(
+    "</head>",
+    '<meta http-equiv="refresh" content="0; url=./en/" /></head>',
+  )
+  .replaceAll('href="../en/', 'href="./en/')
+  .replaceAll('href="../zh/', 'href="./zh/');
+
+if (
+  !rootEnglishHtml.includes('id="main-content"') ||
+  !rootEnglishHtml.includes("Shenzhen College of International Education") ||
+  !rootEnglishHtml.includes('<meta http-equiv="refresh" content="0; url=./en/"') ||
+  rootEnglishHtml.includes("Continue to the English website") ||
+  rootEnglishHtml.includes("进入中文网站")
+) {
+  throw new Error("英文默认入口生成异常，已停止写入。");
+}
 
 await rm(outputRoot, { recursive: true, force: true });
 await mkdir(outputRoot, { recursive: true });
 await cp(clientRoot, outputRoot, { recursive: true });
 await mkdir(join(outputRoot, "en"), { recursive: true });
 await mkdir(join(outputRoot, "zh"), { recursive: true });
-await writeFile(join(outputRoot, "index.html"), rootRedirectHtml, "utf8");
+await writeFile(join(outputRoot, "index.html"), rootEnglishHtml, "utf8");
 await writeFile(join(outputRoot, "en", "index.html"), englishHtml, "utf8");
 await writeFile(join(outputRoot, "zh", "index.html"), chineseHtml, "utf8");
 await writeFile(new URL("../网站成品/.nojekyll", import.meta.url), "", "utf8");
