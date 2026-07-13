@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { SmartImage } from "@/components/ui/SmartImage";
 import type { SiteContent } from "@/lib/content";
 import type { Locale } from "@/lib/i18n";
@@ -10,6 +10,9 @@ type SiteHeaderProps = {
   locale: Locale;
   content: SiteContent;
 };
+
+const readingMarkerRatio = 0.38;
+const languageViewParameter = "view";
 
 export function SiteHeader({ locale, content }: SiteHeaderProps) {
   const navigation = content.navigation;
@@ -32,7 +35,7 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
       setProgress(scrollable > 0 ? (scrollY / scrollable) * 100 : 0);
       setSolid(scrollY > 48);
 
-      const marker = innerHeight * 0.38;
+      const marker = innerHeight * readingMarkerRatio;
       const current = sections
         .filter((section) => section.getBoundingClientRect().top <= marker)
         .at(-1);
@@ -54,6 +57,54 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onScroll);
       cancelAnimationFrame(frame);
+    };
+  }, [navigation]);
+
+  useEffect(() => {
+    const encodedPosition = new URLSearchParams(location.search).get(
+      languageViewParameter,
+    );
+    if (!encodedPosition) return;
+
+    const [sectionId, progressText] = encodedPosition.split(":");
+    const sectionExists = navigation.some((item) => item.id === sectionId);
+    const sectionProgress = Number(progressText);
+    if (!sectionExists || !Number.isFinite(sectionProgress)) return;
+
+    let cleanedUrl = false;
+    const restoreReadingPosition = () => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const clampedProgress = Math.min(1, Math.max(0, sectionProgress));
+      const marker = innerHeight * readingMarkerRatio;
+      const targetScroll =
+        section.offsetTop + section.offsetHeight * clampedProgress - marker;
+      const root = document.documentElement;
+      const previousScrollBehavior = root.style.scrollBehavior;
+      root.style.scrollBehavior = "auto";
+      scrollTo({ top: Math.max(0, targetScroll), behavior: "auto" });
+      requestAnimationFrame(() => {
+        root.style.scrollBehavior = previousScrollBehavior;
+      });
+
+      if (!cleanedUrl) {
+        const cleanUrl = new URL(location.href);
+        cleanUrl.searchParams.delete(languageViewParameter);
+        history.replaceState(
+          history.state,
+          "",
+          `${cleanUrl.pathname}${cleanUrl.search}${cleanUrl.hash}`,
+        );
+        cleanedUrl = true;
+      }
+    };
+
+    const frame = requestAnimationFrame(restoreReadingPosition);
+    const timer = window.setTimeout(restoreReadingPosition, 320);
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(timer);
     };
   }, [navigation]);
 
@@ -114,6 +165,51 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
 
   const languageHref = (language: Locale) => `../${language}/#${active}`;
 
+  const getReadingPosition = () => {
+    const marker = scrollY + innerHeight * readingMarkerRatio;
+    const sections = navigation
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean) as HTMLElement[];
+    const current =
+      sections.filter((section) => section.offsetTop <= marker).at(-1) ?? sections[0];
+
+    if (!current) return { sectionId: active, progress: 0 };
+    const progress = Math.min(
+      1,
+      Math.max(0, (marker - current.offsetTop) / Math.max(1, current.offsetHeight)),
+    );
+    return { sectionId: current.id, progress };
+  };
+
+  const changeLanguage = (
+    event: MouseEvent<HTMLAnchorElement>,
+    language: Locale,
+    mobile: boolean,
+  ) => {
+    if (mobile) setOpen(false);
+    if (
+      language === locale ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      if (language === locale) event.preventDefault();
+      return;
+    }
+
+    event.preventDefault();
+    const { sectionId, progress: sectionProgress } = getReadingPosition();
+    const target = new URL(event.currentTarget.href);
+    target.searchParams.set(
+      languageViewParameter,
+      `${sectionId}:${sectionProgress.toFixed(4)}`,
+    );
+    target.hash = sectionId;
+    location.assign(target.toString());
+  };
+
   const languageSwitcher = (mobile = false) => (
     <nav
       className={`language-switcher${mobile ? " language-switcher--mobile" : ""}`}
@@ -127,7 +223,7 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
         aria-label={content.header.englishName}
         aria-current={locale === "en" ? "page" : undefined}
         data-menu-item={mobile ? "" : undefined}
-        onClick={mobile ? () => setOpen(false) : undefined}
+        onClick={(event) => changeLanguage(event, "en", mobile)}
       >
         {content.header.englishLabel}
       </a>
@@ -140,7 +236,7 @@ export function SiteHeader({ locale, content }: SiteHeaderProps) {
         aria-label={content.header.chineseName}
         aria-current={locale === "zh" ? "page" : undefined}
         data-menu-item={mobile ? "" : undefined}
-        onClick={mobile ? () => setOpen(false) : undefined}
+        onClick={(event) => changeLanguage(event, "zh", mobile)}
       >
         {content.header.chineseLabel}
       </a>

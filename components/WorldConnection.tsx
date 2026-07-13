@@ -452,7 +452,7 @@ export function WorldConnection({ content, emblemAlt }: WorldConnectionProps) {
             {content.kicker}
           </p>
           <h2 id={`${svgId}-ending-title`}>
-            <span>{content.titleLines[0]}</span>
+            <span>{content.titleLines[0]}</span>{" "}
             <span>{content.titleLines[1]}</span>
           </h2>
           <p className="wc-intro-copy">{content.introCopy}</p>

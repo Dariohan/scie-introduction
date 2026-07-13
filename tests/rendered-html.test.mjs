@@ -57,6 +57,12 @@ test("服务端渲染完整英文站点", async () => {
   assert.match(html, /href="\.\.\/zh\/#overview"/);
   assert.match(html, /poster="\/media\/scie-emblem-fallback\.jpg"/);
   assert.match(html, /<source src="\/media\/emblem-study\.mp4" type="video\/mp4"/);
+  assert.match(html, /SCIE expressed through four qualities/);
+  for (const quality of ["Sincerity", "Compassion", "Industrious", "Enthusiasm"]) {
+    assert.match(html, new RegExp(quality));
+  }
+  assert.match(html, /The four Houses: Metal, Wood, Water and Fire/);
+  assert.doesNotMatch(html, /The four Houses: Gold, Wood, Water and Fire/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -76,6 +82,10 @@ test("服务端渲染完整中文站点", async () => {
   assert.match(html, /href="\.\.\/en\/#overview"/);
   assert.match(html, /6KqsnbE3H/);
   assert.match(html, /7gpEZBQlrrG/);
+  assert.match(html, /SCIE 四项核心品格/);
+  for (const quality of ["真实", "同情", "勤勉", "热忱"]) {
+    assert.match(html, new RegExp(quality));
+  }
 });
 
 test("保留终章技术栈、双语架构与优化视频", async () => {
@@ -116,11 +126,17 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
   assert.match(worldConnection, /prefers-reduced-motion/);
   assert.match(worldConnection, /\.set\("\.wc-intro", \{ autoAlpha: 1, y: 0 \}/);
   assert.doesNotMatch(siteHeader, /localStorage|sessionStorage|document\.cookie/);
-  assert.match(staticBuilder, /rel="canonical" href="\.\/en\/"/);
-  assert.match(staticBuilder, /hreflang="zh-CN" href="\.\/zh\/"/);
+  assert.match(siteHeader, /languageViewParameter = "view"/);
+  assert.match(siteHeader, /sectionProgress\.toFixed\(4\)/);
+  assert.match(siteHeader, /history\.replaceState/);
+  assert.match(staticBuilder, /const rootEnglishHtml = englishHtml/);
+  assert.match(staticBuilder, /meta http-equiv="refresh"/);
+  assert.doesNotMatch(staticBuilder, /const rootRedirectHtml/);
   assert.match(i18n, /defaultLocale: Locale = "en"/);
   assert.match(content, /Shenzhen College of International Education/);
   assert.match(content, /深圳国际交流书院/);
+  assert.match(content, /houses: \["Metal", "Wood", "Water", "Fire"\]/);
+  assert.match(content, /title: "Sincerity"/);
   assert.ok((await stat(new URL("../public/media/emblem-study.mp4", import.meta.url))).size > 2_000_000);
   assert.equal(
     createHash("sha256").update(video).digest("hex"),
