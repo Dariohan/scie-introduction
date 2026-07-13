@@ -132,8 +132,8 @@ const zhContent = {
           year: "2003",
           title: "从深圳出发",
           description:
-            "学校经深圳市教育主管部门批准成立，并获得剑桥国际课程相关授权，第一段故事在水围校区展开。配图为当代深圳城市意象，并非2003年历史照片。",
-          image: "/media/scie-shenzhen-origin.webp",
+            "学校经深圳市教育主管部门批准成立，并获得剑桥国际课程相关授权，第一段故事在水围校区展开。配图以当代校园的晨昏光影象征故事开端，并非2003年历史照片。",
+          image: "/media/campus-sunset.jpg",
         },
         {
           year: "2020",
@@ -736,8 +736,8 @@ const enContent = {
           year: "2003",
           title: "Where it all began",
           description:
-            "Established in 2003 with Shenzhen Education Bureau approval, SCIE gained Cambridge authorisation for its IGCSE and A Level programmes. Its first chapter unfolded at Shuiwei. The image is a contemporary symbol of Shenzhen, not a 2003 archival photograph.",
-          image: "/media/scie-shenzhen-origin.webp",
+            "Established in 2003 with Shenzhen Education Bureau approval, SCIE gained Cambridge authorisation for its IGCSE and A Level programmes. Its first chapter unfolded at Shuiwei. The present-day campus light is used as a visual metaphor for beginnings, not as a 2003 archival photograph.",
+          image: "/media/campus-sunset.jpg",
         },
         {
           year: "2020",
