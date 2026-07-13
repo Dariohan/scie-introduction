@@ -48,7 +48,7 @@ export function OverviewSection({ content, shared }: OverviewSectionProps) {
       <div ref={heroRef} className="hero">
         <div className="hero__media" aria-hidden="true">
           <SmartImage
-            src="/media/campus-tree-canopy.jpg"
+            src="/media/scie-campus-hero.webp"
             alt=""
             fetchPriority="high"
             decoding="async"
@@ -170,6 +170,7 @@ export function OverviewSection({ content, shared }: OverviewSectionProps) {
                   alt={event.title}
                   loading="lazy"
                   decoding="async"
+                  sizes="(max-width: 900px) 100vw, 56vw"
                   className={activeEvent === index ? "is-active" : ""}
                 />
               ))}

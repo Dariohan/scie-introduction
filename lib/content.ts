@@ -132,22 +132,22 @@ const zhContent = {
           year: "2003",
           title: "从深圳出发",
           description:
-            "学校经深圳市教育主管部门批准成立，并获得剑桥国际课程相关授权，第一段故事在水围校区展开。",
-          image: "/media/campus-starlight-stairs.jpg",
+            "学校经深圳市教育主管部门批准成立，并获得剑桥国际课程相关授权，第一段故事在水围校区展开。配图为当代深圳城市意象，并非2003年历史照片。",
+          image: "/media/scie-shenzhen-origin.webp",
         },
         {
           year: "2020",
           title: "迁入安托山",
           description:
             "告别水围校区，迁入福田区安托山六路的新校园，学习空间从平面向立体生长。",
-          image: "/media/campus-court-at-dusk.jpg",
+          image: "/media/scie-antuoshan-landmark.webp",
         },
         {
           year: "此刻",
           title: "在世界坐标中继续生长",
           description:
             "来自不同文化背景的师生在同一座校园相遇。每一届学生，都在重写“国际交流”的含义。",
-          image: "/media/campus-sunset.jpg",
+          image: "/media/scie-house-community.webp",
         },
       ],
     },
@@ -220,40 +220,40 @@ const zhContent = {
       nextAria: "下一张校园照片",
       items: [
         {
-          src: "/media/campus-green-facade.jpg",
+          src: "/media/scie-green-facade.webp",
           title: "会呼吸的立面",
           caption: "绿意不是装饰，而是建筑的第二层表皮。",
           tag: "垂直花园",
         },
         {
-          src: "/media/campus-green-corridor.jpg",
+          src: "/media/scie-green-corridor.webp",
           title: "穿过一座绿廊",
           caption: "阳光从枝叶之间落下，日常通道也有了季节。",
           tag: "校园路径",
         },
         {
-          src: "/media/campus-sunset.jpg",
-          title: "日落时分",
-          caption: "建筑收住最后一束光，也收住一天的喧闹。",
-          tag: "光影",
+          src: "/media/scie-campus-evening.webp",
+          title: "灯光亮起时",
+          caption: "暮色落进中庭，连廊与台阶把放学后的脚步轻轻照亮。",
+          tag: "校园暮色",
         },
         {
-          src: "/media/campus-bougainvillea.jpg",
+          src: "/media/scie-bougainvillea-light.webp",
           title: "三角梅盛开",
           caption: "深圳的颜色，在一段不经意的转角突然出现。",
           tag: "四季",
         },
         {
-          src: "/media/campus-court-at-dusk.jpg",
+          src: "/media/scie-basketball-court.webp",
           title: "球场与连廊",
           caption: "向上是课堂，向下是球场，青春在垂直空间里交汇。",
           tag: "标志空间",
         },
         {
-          src: "/media/campus-tree-canopy.jpg",
-          title: "树荫下的校园",
-          caption: "连廊穿过树冠，让建筑保持开放，也让步伐慢下来。",
-          tag: "生态校园",
+          src: "/media/scie-reeds-sky.webp",
+          title: "风从校园经过",
+          caption: "一簇芦苇把天空留进画面，也为建筑之间的日常留出呼吸。",
+          tag: "自然细节",
         },
       ],
     },
@@ -265,11 +265,11 @@ const zhContent = {
     },
     panorama: {
       kicker: "校园实景",
-      title: "抬头，看见树冠、连廊与天空。",
-      body: "连廊穿过树冠，阳光落进校园中庭。一张真实照片，保留此刻最完整的空间与光线。",
-      imageAlt: "树荫与空中连廊实景",
+      title: "沿着连廊，看见校园向上生长。",
+      body: "运动连廊穿过树冠，教学空间、球场与花园在同一幅垂直视野里相遇。",
+      imageAlt: "树木之间向上延伸的校园连廊",
       captionLabel: "校园实景",
-      captionTitle: "树冠、连廊与天空",
+      captionTitle: "连廊、绿意与垂直校园",
     },
     city: {
       kicker: "深圳城市名片",
@@ -294,9 +294,6 @@ const zhContent = {
     },
     video: {
       aria: "校徽视觉动效档案",
-      kicker: "视觉档案",
-      title: "校徽图形演绎",
-      body: "这里展示素材中的视觉研究；终章则由实时网页技术重新实现。",
       play: "播放",
       pause: "暂停",
       loading: "视频加载中",
@@ -359,13 +356,36 @@ const zhContent = {
       ],
     },
     spirit: {
-      imageAlt: "师生共同参与学院主题活动",
+      imageAlt: "学生参与学院语言竞赛",
       kicker: "校风所在",
       title: "自主、开放、协作、行动",
       body:
         "这不是校方发布的固定四字校风，而是从学院活动、社团实践、舞台表达与公共讨论中读到的校园气质：允许不同，也要求每个人为选择负责。",
       housesAria: "金木水火四大学院",
       houses: ["金", "木", "水", "火"],
+    },
+    expression: {
+      kicker: "表达的现场",
+      titleLines: ["让表演、设计与对话，", "各自拥有被看见的位置。"],
+      description:
+        "课堂之外，学生也在灯光、秀场与公共交流中练习判断、创造和表达。",
+      items: [
+        {
+          src: "/media/scie-expression-stage.webp",
+          label: "舞台表演",
+          title: "灯光落下，表达开始",
+        },
+        {
+          src: "/media/scie-expression-fashion.webp",
+          label: "学生设计",
+          title: "把想法穿上舞台",
+        },
+        {
+          src: "/media/scie-expression-dialogue.webp",
+          label: "校园讲座",
+          title: "让课堂延伸到更大的问题",
+        },
+      ],
     },
     stories: {
       kicker: "名人故事与学生成长",
@@ -379,8 +399,8 @@ const zhContent = {
           title: "从深国交到维港：把好奇变成记者的职业路径",
           description:
             "校方故事记录：他先后完成香港中文大学新闻与传播本科学习、香港大学新闻学硕士学习；文章发布时任职于香港奥美。",
-          image: "/media/campus-sunset.jpg",
-          imageNote: "校园实景配图，并非人物肖像",
+          image: "/media/scie-victoria-harbour.webp",
+          imageNote: "维港城市景观配图，并非人物肖像",
           source:
             "https://www.scie.com.cn/from-scie-to-victoria-harbour-my-journalists-journey-of-growth/",
         },
@@ -408,10 +428,10 @@ const zhContent = {
       ],
     },
     alumni: {
-      imageAlt: "校园师生群像",
-      kicker: "校友群像",
-      title: "从这里走出去，去往更大的世界。",
-      body: "校友分布在不同国家、学科与行业。比目的地更重要的，是继续保持好奇、同理与行动的能力。",
+      imageAlt: "深国交师生在星光大道台阶上的校园群像",
+      kicker: "校园群像",
+      title: "在这里相遇，也从这里走向更大的世界。",
+      body: "这张校园群像记录共同体的当下：不同经历的人在同一座校园相遇，也带着好奇、同理与行动继续成长。",
     },
   },
   life: {
@@ -442,7 +462,7 @@ const zhContent = {
       {
         title: "一场相聚",
         description: "美食节把学生、教师与家庭聚到一起，分享也因此有了公共意义。",
-        src: "/media/student-market-fair.jpg",
+        src: "/media/scie-food-festival.webp",
       },
     ],
     rednote: {
@@ -471,19 +491,19 @@ const zhContent = {
       selectorAria: "校园生活照片选择",
       items: [
         {
-          src: "/media/student-camp-stage.jpg",
-          title: "新生营",
-          label: "从陌生到同行",
+          src: "/media/scie-life-camp.webp",
+          title: "校园营会",
+          label: "从相识到同行",
         },
         {
-          src: "/media/student-market-fair.jpg",
-          title: "慈善美食节",
-          label: "把热爱变成行动",
+          src: "/media/scie-life-creativity.webp",
+          title: "校园趣味时刻",
+          label: "让想象力成为共同语言",
         },
         {
-          src: "/media/student-dance.jpg",
-          title: "舞台时刻",
-          label: "允许每一种表达发生",
+          src: "/media/scie-life-fashion.webp",
+          title: "时装秀场",
+          label: "用设计表达自己的视角",
         },
         {
           src: "/media/campus-fireworks.jpg",
@@ -491,17 +511,17 @@ const zhContent = {
           label: "记住共同经历的瞬间",
         },
         {
-          src: "/media/teacher-student-workshop.jpg",
-          title: "学院活动",
-          label: "在合作里认识彼此",
+          src: "/media/scie-life-house.webp",
+          title: "学院共创",
+          label: "在合作与色彩里认识彼此",
         },
         {
-          src: "/media/campus-cat.jpg",
+          src: "/media/scie-life-cat.webp",
           title: "校园朋友",
           label: "日常也有柔软的注脚",
         },
         {
-          src: "/media/campus-christmas.jpg",
+          src: "/media/scie-life-christmas.webp",
           title: "节日校园",
           label: "让共同生活拥有仪式感",
         },
@@ -716,22 +736,22 @@ const enContent = {
           year: "2003",
           title: "Where it all began",
           description:
-            "Established in 2003 with Shenzhen Education Bureau approval, SCIE gained Cambridge authorisation for its IGCSE and A Level programmes. Its first chapter unfolded at Shuiwei.",
-          image: "/media/campus-starlight-stairs.jpg",
+            "Established in 2003 with Shenzhen Education Bureau approval, SCIE gained Cambridge authorisation for its IGCSE and A Level programmes. Its first chapter unfolded at Shuiwei. The image is a contemporary symbol of Shenzhen, not a 2003 archival photograph.",
+          image: "/media/scie-shenzhen-origin.webp",
         },
         {
           year: "2020",
           title: "A new chapter in Antuoshan",
           description:
             "In 2020, SCIE moved from Shuiwei to its new Antuoshan campus, expanding the setting for learning, arts and sport.",
-          image: "/media/campus-court-at-dusk.jpg",
+          image: "/media/scie-antuoshan-landmark.webp",
         },
         {
           year: "Today",
           title: "Growing within a global community",
           description:
             "Students and teachers from different cultural backgrounds meet on one campus. Each new cohort brings fresh meaning to international education and exchange.",
-          image: "/media/campus-sunset.jpg",
+          image: "/media/scie-house-community.webp",
         },
       ],
     },
@@ -804,40 +824,40 @@ const enContent = {
       nextAria: "Next campus photograph",
       items: [
         {
-          src: "/media/campus-green-facade.jpg",
+          src: "/media/scie-green-facade.webp",
           title: "A living façade",
           caption: "Greenery is not an ornament here; it forms a second skin for the building.",
           tag: "Vertical garden",
         },
         {
-          src: "/media/campus-green-corridor.jpg",
+          src: "/media/scie-green-corridor.webp",
           title: "Through a green corridor",
           caption: "Sunlight falls through the leaves, giving an everyday route its own seasons.",
           tag: "Campus path",
         },
         {
-          src: "/media/campus-sunset.jpg",
-          title: "At sunset",
-          caption: "The buildings hold the last light — and the final echoes of a busy day.",
-          tag: "Light and shade",
+          src: "/media/scie-campus-evening.webp",
+          title: "When the lights come on",
+          caption: "Dusk settles into the courtyard as walkways and steps light the path beyond the school day.",
+          tag: "Campus at dusk",
         },
         {
-          src: "/media/campus-bougainvillea.jpg",
+          src: "/media/scie-bougainvillea-light.webp",
           title: "Bougainvillea in bloom",
           caption: "A flash of Shenzhen colour appears around an unexpected corner.",
           tag: "Seasons",
         },
         {
-          src: "/media/campus-court-at-dusk.jpg",
+          src: "/media/scie-basketball-court.webp",
           title: "Court and walkway",
           caption: "Classrooms above, a court below: student life meets across a vertical campus.",
           tag: "Signature space",
         },
         {
-          src: "/media/campus-tree-canopy.jpg",
-          title: "Beneath the trees",
-          caption: "Walkways pass through the canopy, keeping the architecture open and the pace unhurried.",
-          tag: "Green campus",
+          src: "/media/scie-reeds-sky.webp",
+          title: "A breeze through campus",
+          caption: "Reeds hold a patch of sky in the frame, giving everyday campus life room to breathe.",
+          tag: "Natural detail",
         },
       ],
     },
@@ -849,11 +869,11 @@ const enContent = {
     },
     panorama: {
       kicker: "Campus View",
-      title: "Look up: trees, walkways and sky.",
-      body: "Elevated walkways pass through the canopy as sunlight reaches the courtyard below. One photograph preserves the space and light of this moment.",
-      imageAlt: "Tree canopy and elevated campus walkways",
+      title: "Follow the walkway as the campus rises through the trees.",
+      body: "The running track passes through the canopy, bringing learning spaces, courts and gardens into one layered view.",
+      imageAlt: "An elevated campus walkway rising through the trees",
       captionLabel: "Campus view",
-      captionTitle: "Trees, walkways and sky",
+      captionTitle: "Walkways, greenery and a vertical campus",
     },
     city: {
       kicker: "Shenzhen Landmarks",
@@ -878,9 +898,6 @@ const enContent = {
     },
     video: {
       aria: "SCIE emblem motion study",
-      kicker: "Visual Archive",
-      title: "The emblem in motion",
-      body: "This film presents a visual study from the supplied materials; the final chapter reimagines it with real-time web technology.",
       play: "Play",
       pause: "Pause",
       loading: "Loading video",
@@ -943,13 +960,36 @@ const enContent = {
       ],
     },
     spirit: {
-      imageAlt: "Students and teachers taking part in a House activity",
+      imageAlt: "Students taking part in a House languages quiz",
       kicker: "The Character of the Campus",
       title: "Agency, openness, collaboration and action",
       body:
         "These are not presented as an official four-part motto. They describe a spirit visible in House activities, clubs, performance and public discussion: difference is welcomed, and each person is expected to take responsibility for their choices.",
       housesAria: "The four Houses: Metal, Wood, Water and Fire",
       houses: ["Metal", "Wood", "Water", "Fire"],
+    },
+    expression: {
+      kicker: "Where Ideas Take the Stage",
+      titleLines: ["Performance, design and dialogue —", "each given room to be seen."],
+      description:
+        "Beyond the classroom, students practise judgement, creativity and expression through performance, design and public exchange.",
+      items: [
+        {
+          src: "/media/scie-expression-stage.webp",
+          label: "Performance",
+          title: "When the spotlight falls, expression begins",
+        },
+        {
+          src: "/media/scie-expression-fashion.webp",
+          label: "Student design",
+          title: "Ideas made visible on the runway",
+        },
+        {
+          src: "/media/scie-expression-dialogue.webp",
+          label: "Campus lecture",
+          title: "Opening the classroom onto wider questions",
+        },
+      ],
     },
     stories: {
       kicker: "Alumni and Student Stories",
@@ -963,8 +1003,8 @@ const enContent = {
           title: "From SCIE to Victoria Harbour: a journalist's journey",
           description:
             "SCIE's profile traces Jack's studies at CUHK and HKU before his move into professional work with Ogilvy in Hong Kong.",
-          image: "/media/campus-sunset.jpg",
-          imageNote: "Campus image; not a portrait of the subject",
+          image: "/media/scie-victoria-harbour.webp",
+          imageNote: "Victoria Harbour cityscape; not a portrait of the subject",
           source:
             "https://www.scie.com.cn/from-scie-to-victoria-harbour-my-journalists-journey-of-growth/",
         },
@@ -992,10 +1032,10 @@ const enContent = {
       ],
     },
     alumni: {
-      imageAlt: "Students and teachers together on campus",
+      imageAlt: "The SCIE community gathered on the Starlight Avenue steps",
       kicker: "The SCIE Community",
-      title: "From here, into a wider world.",
-      body: "SCIE alumni continue into different countries, disciplines and professions. Beyond any destination, what matters is the ability to remain curious, empathetic and ready to act.",
+      title: "Meeting here, then moving into a wider world.",
+      body: "This campus portrait records a community in the present: people with different experiences meeting in one place, then continuing to grow with curiosity, empathy and purpose.",
     },
   },
   life: {
@@ -1026,7 +1066,7 @@ const enContent = {
       {
         title: "A shared table",
         description: "Food festivals bring students, teachers and families together, turning a meal into a community occasion.",
-        src: "/media/student-market-fair.jpg",
+        src: "/media/scie-food-festival.webp",
       },
     ],
     rednote: {
@@ -1055,19 +1095,19 @@ const enContent = {
       selectorAria: "Choose a campus-life photograph",
       items: [
         {
-          src: "/media/student-camp-stage.jpg",
-          title: "New student camp",
-          label: "From first introductions to a shared journey",
+          src: "/media/scie-life-camp.webp",
+          title: "SCIE Camp",
+          label: "From meeting one another to a shared journey",
         },
         {
-          src: "/media/student-market-fair.jpg",
-          title: "Charity food festival",
-          label: "Turning enthusiasm into action",
+          src: "/media/scie-life-creativity.webp",
+          title: "A playful campus moment",
+          label: "Letting imagination become a shared language",
         },
         {
-          src: "/media/student-dance.jpg",
-          title: "On stage",
-          label: "Making room for every kind of expression",
+          src: "/media/scie-life-fashion.webp",
+          title: "Fashion on stage",
+          label: "Using design to express a point of view",
         },
         {
           src: "/media/campus-fireworks.jpg",
@@ -1075,17 +1115,17 @@ const enContent = {
           label: "Remembering a moment shared together",
         },
         {
-          src: "/media/teacher-student-workshop.jpg",
-          title: "House activities",
-          label: "Getting to know one another through collaboration",
+          src: "/media/scie-life-house.webp",
+          title: "House creativity",
+          label: "Getting to know one another through colour and collaboration",
         },
         {
-          src: "/media/campus-cat.jpg",
+          src: "/media/scie-life-cat.webp",
           title: "A campus companion",
           label: "A softer footnote to the everyday",
         },
         {
-          src: "/media/campus-christmas.jpg",
+          src: "/media/scie-life-christmas.webp",
           title: "A festive campus",
           label: "Giving community life a sense of occasion",
         },

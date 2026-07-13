@@ -92,6 +92,7 @@ export function LifeSection({ content }: LifeSectionProps) {
                   alt={item.title}
                   loading="lazy"
                   decoding="async"
+                  sizes="(max-width: 900px) 100vw, 70vw"
                   className={activeLife === index ? "is-active" : ""}
                 />
               ))}

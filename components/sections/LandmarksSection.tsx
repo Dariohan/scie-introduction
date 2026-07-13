@@ -8,7 +8,7 @@ import {
   Play,
   RotateCcw,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
@@ -27,6 +27,37 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
 
   const { gallery, video } = content;
 
+  useEffect(() => {
+    const player = videoRef.current;
+    if (!player || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+          if (!player.paused || player.error) return;
+
+          player.muted = true;
+          player.defaultMuted = true;
+          player.playsInline = true;
+          setVideoStatus("loading");
+          void player.play().catch(() => {
+            setVideoStatus(player.error ? "error" : "paused");
+          });
+          return;
+        }
+
+        if (!player.paused) player.pause();
+      },
+      { threshold: [0, 0.35, 0.75] },
+    );
+
+    observer.observe(player);
+    return () => {
+      observer.disconnect();
+      player.pause();
+    };
+  }, []);
+
   const changeSlide = (direction: number) => {
     setGalleryIndex((current) =>
       (current + direction + gallery.items.length) % gallery.items.length,
@@ -43,7 +74,7 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
       try {
         await player.play();
       } catch {
-        setVideoStatus("error");
+        setVideoStatus(player.error ? "error" : "paused");
       }
       return;
     }
@@ -53,7 +84,7 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
       try {
         await player.play();
       } catch {
-        setVideoStatus("error");
+        setVideoStatus(player.error ? "error" : "paused");
       }
     } else {
       player.pause();
@@ -85,10 +116,11 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
         <div className="landmark-feature reveal-item">
           <div className="landmark-feature__image">
             <SmartImage
-              src="/media/campus-starlight-stairs.jpg"
+              src="/media/scie-starlight-avenue.webp"
               alt={content.feature.imageAlt}
               loading="lazy"
               decoding="async"
+              sizes="(max-width: 900px) 100vw, 64vw"
             />
             <span>{content.feature.badge}</span>
           </div>
@@ -113,7 +145,13 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
                   className={galleryIndex === index ? "is-active" : ""}
                   aria-hidden={galleryIndex !== index}
                 >
-                  <SmartImage src={item.src} alt={item.title} loading="lazy" decoding="async" />
+                  <SmartImage
+                    src={item.src}
+                    alt={item.title}
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(max-width: 640px) 90vw, 92vw"
+                  />
                 </figure>
               ))}
               <div className="gallery-stage__shade" />
@@ -170,10 +208,11 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
 
           <figure className="panorama-view reveal-item">
             <SmartImage
-              src="/media/campus-tree-canopy.jpg"
+              src="/media/scie-campus-walkway.webp"
               alt={content.panorama.imageAlt}
               loading="lazy"
               decoding="async"
+              sizes="(max-width: 900px) 100vw, 70vw"
             />
             <figcaption>
               <span>{content.panorama.captionLabel}</span>
@@ -184,6 +223,15 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
 
         <div className="city-and-video">
           <div className="city-card reveal-item">
+            <SmartImage
+              className="city-card__backdrop"
+              src="/media/scie-shenzhen-night.webp"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 900px) 100vw, 50vw"
+            />
             <span className="kicker">{content.city.kicker}</span>
             <h3>{content.city.title}</h3>
             <div className="city-landmarks">
@@ -229,9 +277,6 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
               <source src="/media/emblem-study.mp4" type="video/mp4" />
             </video>
             <div className="video-card__overlay">
-              <span>{video.kicker}</span>
-              <h3>{video.title}</h3>
-              <p>{video.body}</p>
               <span
                 id="emblem-motion-status"
                 className="video-card__status"

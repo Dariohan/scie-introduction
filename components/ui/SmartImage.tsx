@@ -22,6 +22,32 @@ const photoWidths: Record<string, number> = {
   "student-market-fair.jpg": 2200,
   "student-theatre.jpg": 2200,
   "teacher-student-workshop.jpg": 2200,
+  "scie-antuoshan-landmark.webp": 2400,
+  "scie-basketball-court.webp": 2400,
+  "scie-bougainvillea-light.webp": 2400,
+  "scie-campus-evening.webp": 2400,
+  "scie-campus-hero.webp": 2400,
+  "scie-campus-walkway.webp": 2400,
+  "scie-community-portrait.webp": 2400,
+  "scie-expression-dialogue.webp": 2400,
+  "scie-expression-fashion.webp": 2400,
+  "scie-expression-stage.webp": 2400,
+  "scie-food-festival.webp": 2400,
+  "scie-green-corridor.webp": 2400,
+  "scie-green-facade.webp": 2400,
+  "scie-house-community.webp": 2400,
+  "scie-house-quiz.webp": 2400,
+  "scie-life-camp.webp": 2400,
+  "scie-life-cat.webp": 2400,
+  "scie-life-christmas.webp": 2400,
+  "scie-life-creativity.webp": 2400,
+  "scie-life-fashion.webp": 2400,
+  "scie-life-house.webp": 2400,
+  "scie-reeds-sky.webp": 2400,
+  "scie-shenzhen-night.webp": 2400,
+  "scie-shenzhen-origin.webp": 1440,
+  "scie-starlight-avenue.webp": 2400,
+  "scie-victoria-harbour.webp": 2400,
 };
 
 type SmartImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & {
@@ -43,7 +69,7 @@ export function SmartImage({ src, alt, sizes, ...props }: SmartImageProps) {
       alt={alt}
       srcSet={
         responsiveSource
-          ? `${responsiveSource} 960w, ${src} ${sourceWidth}w`
+          ? `${responsiveSource} 1080w, ${src} ${sourceWidth}w`
           : undefined
       }
       sizes={

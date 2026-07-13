@@ -110,10 +110,11 @@ export function CultureSection({ content }: CultureSectionProps) {
         <div className="campus-spirit reveal-item">
           <div className="campus-spirit__image">
             <SmartImage
-              src="/media/teacher-student-workshop.jpg"
+              src="/media/scie-house-quiz.webp"
               alt={content.spirit.imageAlt}
               loading="lazy"
               decoding="async"
+              sizes="(max-width: 900px) 100vw, 55vw"
             />
           </div>
           <div className="campus-spirit__copy">
@@ -130,6 +131,43 @@ export function CultureSection({ content }: CultureSectionProps) {
                 </span>
               ))}
             </div>
+          </div>
+        </div>
+
+        <div className="expression-block">
+          <div className="subsection-title reveal-item">
+            <span className="kicker">{content.expression.kicker}</span>
+            <h3>
+              {content.expression.titleLines[0]}
+              <br />
+              {content.expression.titleLines[1]}
+            </h3>
+            <p>{content.expression.description}</p>
+          </div>
+
+          <div className="expression-grid">
+            {content.expression.items.map((item, index) => (
+              <figure
+                className={`expression-card expression-card--${index + 1} reveal-item`}
+                key={item.src}
+              >
+                <SmartImage
+                  src={item.src}
+                  alt={item.title}
+                  loading="lazy"
+                  decoding="async"
+                  sizes={index === 0
+                    ? "(max-width: 900px) 100vw, 58vw"
+                    : index === 2
+                      ? "(max-width: 640px) 100vw, (max-width: 900px) 50vw, 36vw"
+                      : "(max-width: 640px) 100vw, (max-width: 900px) 50vw, 58vw"}
+                />
+                <figcaption>
+                  <span>{item.label}</span>
+                  <strong>{item.title}</strong>
+                </figcaption>
+              </figure>
+            ))}
           </div>
         </div>
 
@@ -153,6 +191,7 @@ export function CultureSection({ content }: CultureSectionProps) {
                     alt={story.title}
                     loading="lazy"
                     decoding="async"
+                    sizes="(max-width: 640px) 100vw, (max-width: 900px) 44vw, 30vw"
                   />
                   <span>0{index + 1}</span>
                   <small>{story.imageNote}</small>
@@ -174,7 +213,7 @@ export function CultureSection({ content }: CultureSectionProps) {
         <div className="alumni-showcase reveal-item">
           <SmartImage
             sizes="100vw"
-            src="/media/student-community.jpg"
+            src="/media/scie-community-portrait.webp"
             alt={content.alumni.imageAlt}
             loading="lazy"
             decoding="async"

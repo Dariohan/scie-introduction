@@ -57,6 +57,10 @@ test("服务端渲染完整英文站点", async () => {
   assert.match(html, /href="\.\.\/zh\/#overview"/);
   assert.match(html, /poster="\/media\/scie-emblem-fallback\.jpg"/);
   assert.match(html, /<source src="\/media\/emblem-study\.mp4" type="video\/mp4"/);
+  assert.match(html, /<video[^>]*muted=""/i);
+  assert.match(html, /<video[^>]*playsinline=""/i);
+  assert.match(html, /<video[^>]*loop=""/i);
+  assert.doesNotMatch(html, /The emblem in motion|Visual Archive/);
   assert.match(html, /SCIE expressed through four qualities/);
   for (const quality of ["Sincerity", "Compassion", "Industrious", "Enthusiasm"]) {
     assert.match(html, new RegExp(quality));
@@ -146,8 +150,8 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
   await Promise.all([
     access(new URL("../public/media/scie-emblem.svg", import.meta.url)),
     access(new URL("../public/media/world-map.svg", import.meta.url)),
-    access(new URL("../public/media/campus-tree-canopy.jpg", import.meta.url)),
-    access(new URL("../public/media/mobile/campus-tree-canopy.jpg", import.meta.url)),
+    access(new URL("../public/media/scie-campus-hero.webp", import.meta.url)),
+    access(new URL("../public/media/mobile/scie-campus-hero.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-overview.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-dining.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-support.webp", import.meta.url)),

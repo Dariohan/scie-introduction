@@ -50,7 +50,7 @@ const emblem = await sharp("public/media/scie-emblem-fallback.jpg")
   .toBuffer();
 
 async function createSocialImage(outputPath, overlay) {
-  await sharp("public/media/campus-tree-canopy.jpg")
+  await sharp("public/media/scie-campus-hero.webp")
     .resize(width, height, { fit: "cover", position: "centre" })
     .modulate({ saturation: 0.82, brightness: 0.78 })
     .composite([
