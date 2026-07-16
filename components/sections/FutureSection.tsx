@@ -16,11 +16,10 @@ export function FutureSection({ content, worldContent, shared }: FutureSectionPr
         <div>
           <span className="kicker">{content.intro.kicker}</span>
           <h2>
-            {content.intro.titleLines[0]}
-            <br />
-            {content.intro.titleLines[1]}
+            {content.intro.titleLines.map((line) => (
+              <span key={line}>{line}</span>
+            ))}
           </h2>
-          <p>{content.intro.body}</p>
         </div>
       </div>
 
@@ -47,8 +46,8 @@ export function FutureSection({ content, worldContent, shared }: FutureSectionPr
             </a>
             {" "}{content.footer.mapCreditAfter}
           </p>
-          <p>{content.footer.dataNote}</p>
         </div>
+        <p className="site-footer__disclaimer">{content.footer.dataNote}</p>
       </footer>
     </section>
   );

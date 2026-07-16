@@ -5,17 +5,12 @@ import { useState } from "react";
 import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { HouseSystem } from "@/components/sections/HouseSystem";
+import { StudentCommunity } from "@/components/sections/StudentCommunity";
 
 type CultureSectionProps = {
   content: SiteContent["culture"];
 };
-
-const houseClasses = [
-  "house-stripe--gold",
-  "house-stripe--green",
-  "house-stripe--blue",
-  "house-stripe--red",
-] as const;
 
 export function CultureSection({ content }: CultureSectionProps) {
   const [valueIndex, setValueIndex] = useState(0);
@@ -36,7 +31,6 @@ export function CultureSection({ content }: CultureSectionProps) {
           <div className="motto-block__lead">
             <span className="kicker">{content.motto.kicker}</span>
             <p>{content.motto.title}</p>
-            <small>{content.motto.sourceNote}</small>
           </div>
           <div className="motto-block__statement">
             <span>“</span>
@@ -107,32 +101,9 @@ export function CultureSection({ content }: CultureSectionProps) {
           </div>
         </div>
 
-        <div className="campus-spirit reveal-item">
-          <div className="campus-spirit__image">
-            <SmartImage
-              src="/media/scie-house-quiz.webp"
-              alt={content.spirit.imageAlt}
-              loading="lazy"
-              decoding="async"
-              sizes="(max-width: 900px) 100vw, 55vw"
-            />
-          </div>
-          <div className="campus-spirit__copy">
-            <span className="kicker">{content.spirit.kicker}</span>
-            <h3>{content.spirit.title}</h3>
-            <p>{content.spirit.body}</p>
-            <div className="house-stripes" aria-label={content.spirit.housesAria}>
-              {content.spirit.houses.map((house, index) => (
-                <span
-                  className={`house-stripe ${houseClasses[index]}`}
-                  key={house}
-                >
-                  {house}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
+        <HouseSystem content={content.houseSystem} />
+
+        <StudentCommunity content={content.community} />
 
         <div className="expression-block">
           <div className="subsection-title reveal-item">
@@ -194,7 +165,6 @@ export function CultureSection({ content }: CultureSectionProps) {
                     sizes="(max-width: 640px) 100vw, (max-width: 900px) 44vw, 30vw"
                   />
                   <span>0{index + 1}</span>
-                  <small>{story.imageNote}</small>
                 </div>
                 <div className="story-card__copy">
                   <span>{story.type}</span>
@@ -222,7 +192,6 @@ export function CultureSection({ content }: CultureSectionProps) {
           <div className="alumni-showcase__copy">
             <span>{content.alumni.kicker}</span>
             <h3>{content.alumni.title}</h3>
-            <p>{content.alumni.body}</p>
           </div>
         </div>
       </div>

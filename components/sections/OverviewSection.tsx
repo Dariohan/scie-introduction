@@ -6,6 +6,7 @@ import type { SiteContent } from "@/lib/content";
 import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
+import { AcademicPerformance } from "@/components/sections/AcademicPerformance";
 
 type OverviewSectionProps = {
   content: SiteContent["overview"];
@@ -258,6 +259,8 @@ export function OverviewSection({ content, shared }: OverviewSectionProps) {
             </div>
           </div>
         </div>
+
+        <AcademicPerformance content={content.academics} />
       </div>
     </section>
   );

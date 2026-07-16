@@ -13,6 +13,7 @@ import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { RednoteLink } from "@/components/ui/RednoteLink";
+import { CorridorJourney } from "@/components/ui/CorridorJourney";
 
 type VideoStatus = "idle" | "loading" | "playing" | "paused" | "stalled" | "error";
 
@@ -220,6 +221,8 @@ export function LandmarksSection({ content }: LandmarksSectionProps) {
             </figcaption>
           </figure>
         </div>
+
+        <CorridorJourney {...content.corridor} />
 
         <div className="city-and-video">
           <div className="city-card reveal-item">

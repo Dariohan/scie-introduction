@@ -6,6 +6,8 @@ import type { SiteContent } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SmartImage } from "@/components/ui/SmartImage";
 import { RednoteLink } from "@/components/ui/RednoteLink";
+import { CampusDiningStories } from "@/components/sections/CampusDiningStories";
+import { SportsStory } from "@/components/sections/SportsStory";
 
 type LifeSectionProps = {
   content: SiteContent["life"];
@@ -57,6 +59,8 @@ export function LifeSection({ content }: LifeSectionProps) {
             </article>
           ))}
         </div>
+
+        <CampusDiningStories content={content.diningStories} />
 
         <RednoteLink {...content.rednote} />
 
@@ -127,11 +131,12 @@ export function LifeSection({ content }: LifeSectionProps) {
           </div>
         </div>
 
+        <SportsStory content={content.sports} />
+
         <div className="daily-block">
           <div className="subsection-title reveal-item">
             <span className="kicker">{daily.kicker}</span>
             <h3>{daily.titleLines[0]}<br />{daily.titleLines[1]}</h3>
-            <p>{daily.disclaimer}</p>
           </div>
 
           <div className="daily-content">
@@ -158,7 +163,6 @@ export function LifeSection({ content }: LifeSectionProps) {
                 <span>{daily.schedule.kicker}</span>
                 <div>
                   <strong>{daily.schedule.title}</strong>
-                  <p>{daily.schedule.body}</p>
                 </div>
               </figcaption>
             </figure>
