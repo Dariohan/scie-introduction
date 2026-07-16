@@ -598,11 +598,6 @@ export function WorldConnection({ content, emblemAlt }: WorldConnectionProps) {
             <p className="wc-final-kicker">{content.finalKicker}</p>
             <h3>{content.finalTitle}</h3>
             <span className="wc-final-line" aria-hidden="true" />
-            <p>
-              {content.finalLines[0]}
-              <br />
-              {content.finalLines[1]}
-            </p>
           </div>
         </div>
 

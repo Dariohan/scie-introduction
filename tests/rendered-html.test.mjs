@@ -67,8 +67,27 @@ test("服务端渲染完整英文站点", async () => {
   for (const quality of ["Sincerity", "Compassion", "Industrious", "Enthusiasm"]) {
     assert.match(html, new RegExp(quality));
   }
-  assert.match(html, /The four Houses: Metal, Wood, Water and Fire/);
-  assert.doesNotMatch(html, /The four Houses: Gold, Wood, Water and Fire/);
+  assert.match(html, /Metal, Wood, Water and Fire/);
+  assert.match(html, /Every student belongs to a House/);
+  for (const house of ["Metal House", "Wood House", "Water House", "Fire House"]) {
+    assert.match(html, new RegExp(house));
+  }
+  assert.match(html, /2,100\+/);
+  assert.match(html, /250\+/);
+  assert.match(html, /From SCIE to universities around the world/);
+  assert.match(html, /SCIEMUN 2026/);
+  assert.match(html, /href="https:\/\/www\.scie\.com\.cn\/sciemun-vi-x-nessicmun-2026-successfully-concluded\/"/);
+  assert.match(html, /TEDxSCIE/);
+  assert.match(html, /Sport and House life/);
+  assert.match(html, /We choose to learn in Shenzhen, beside the sea\./);
+  assert.match(html, /Know the world\. Step into it\. Change it\./);
+  assert.match(html, /Images are used for visual storytelling/);
+  assert.match(html, /poster="\/media\/scie-corridor-poster\.webp"/);
+  assert.match(html, /<source src="\/media\/scie-corridor-journey-mobile\.mp4"/);
+  assert.match(html, /<source src="\/media\/scie-corridor-journey\.mp4"/);
+  assert.match(html, /\/media\/scie-leafy-passage\.webp/);
+  assert.doesNotMatch(html, /\/media\/scie-green-facade\.webp/);
+  assert.doesNotMatch(html, /Gold, Wood, Water and Fire/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 
@@ -91,6 +110,26 @@ test("服务端渲染完整中文站点", async () => {
   assert.match(html, /SCIE 四项核心品格/);
   for (const quality of ["真实", "同情", "勤勉", "热忱"]) {
     assert.match(html, new RegExp(quality));
+  }
+  assert.match(html, /每位学生都属于一个学院/);
+  for (const house of ["Metal House", "Wood House", "Water House", "Fire House"]) {
+    assert.match(html, new RegExp(house));
+  }
+  assert.match(html, /从深国交出发，每个人都有自己的方向/);
+  assert.match(html, /250\+/);
+  assert.match(html, /模拟联合国/);
+  assert.match(html, /TEDxSCIE/);
+  assert.match(html, /体育与学院活动/);
+  assert.match(html, /我们选择在有海的深圳读书/);
+  assert.match(html, /认识世界 走向世界 改变世界/);
+  assert.match(html, /本页图片仅用于视觉叙事/);
+  for (const removedNote of [
+    "页面没有注明具体学年",
+    "这里不把数字绑定到某一届学生",
+    "不代表学校每日菜单",
+    "不替当事人补写结论",
+  ]) {
+    assert.doesNotMatch(html, new RegExp(removedNote));
   }
 });
 
@@ -149,7 +188,9 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
   assert.match(i18n, /defaultLocale: Locale = "en"/);
   assert.match(content, /Shenzhen College of International Education/);
   assert.match(content, /深圳国际交流书院/);
-  assert.match(content, /houses: \["Metal", "Wood", "Water", "Fire"\]/);
+  for (const house of ["Metal House", "Wood House", "Water House", "Fire House"]) {
+    assert.match(content, new RegExp(`name: "${house}"`));
+  }
   assert.match(content, /title: "Sincerity"/);
   assert.ok((await stat(new URL("../public/media/emblem-study.mp4", import.meta.url))).size > 2_000_000);
   assert.equal(
@@ -167,6 +208,18 @@ test("保留终章技术栈、双语架构与优化视频", async () => {
     access(new URL("../public/media/campus-plan-support.webp", import.meta.url)),
     access(new URL("../public/media/campus-plan-level-two.webp", import.meta.url)),
     access(new URL("../public/media/student-timetable-sample.webp", import.meta.url)),
+    access(new URL("../public/media/scie-leafy-passage.webp", import.meta.url)),
+    access(new URL("../public/media/mobile/scie-leafy-passage.webp", import.meta.url)),
+    access(new URL("../public/media/scie-four-houses.webp", import.meta.url)),
+    access(new URL("../public/media/scie-metal-house.webp", import.meta.url)),
+    access(new URL("../public/media/scie-student-display-wall.webp", import.meta.url)),
+    access(new URL("../public/media/scie-mun-context.webp", import.meta.url)),
+    access(new URL("../public/media/scie-milk-tea.webp", import.meta.url)),
+    access(new URL("../public/media/scie-sports-sprint.webp", import.meta.url)),
+    access(new URL("../public/media/scie-sports-day.webp", import.meta.url)),
+    access(new URL("../public/media/scie-corridor-poster.webp", import.meta.url)),
+    access(new URL("../public/media/scie-corridor-journey-mobile.mp4", import.meta.url)),
+    access(new URL("../public/media/scie-corridor-journey.mp4", import.meta.url)),
     access(new URL("../public/og.png", import.meta.url)),
     access(new URL("../public/og-en.png", import.meta.url)),
   ]);
